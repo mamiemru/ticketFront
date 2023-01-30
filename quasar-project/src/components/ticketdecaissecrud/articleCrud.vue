@@ -1,7 +1,7 @@
 <template>
     <q-card class="text-grey" style="width: 90%">
 
-    <q-card-section v-if="$attrs.editMode">
+    <q-card-section v-if="$attrs.canCreate">
         <div class="text-h6">Ajouter un article</div>
     </q-card-section>
 
@@ -11,7 +11,7 @@
             <q-img :src="$attrs.article.item.attachement.image" style="max-height: 290px;" fit="scale-down" v-if="$attrs.article.item.attachement" />
         </q-card-section>
 
-        <q-card-section class="col-6" v-if="$attrs.editMode">
+        <q-card-section class="col-6" v-if="$attrs.canCreate">
             <q-select label="Identifiant article" dense class="col-5" @input-value="onChangedIdent" :options="filteredIdentOptions"
                 :model-value="$attrs.article.item.ident" use-input fill-input input-debounce="0" hide-selected @filter="filterIdentFn"
             >
@@ -23,13 +23,13 @@
             </q-input>
 
             <q-select label="Categorie" dense class="col-5" :options="articleCategoriesOptions" @input-value="onChangedArticleCategorie"
-                :model-value="$attrs.article.item.categorie" use-input fill-input input-debounce="0" hide-selected
+                :model-value="$attrs.article.item.category.name" use-input fill-input input-debounce="0" hide-selected
             >
                 <template v-slot:prepend><q-icon name="label" /></template>
             </q-select>
     
             <q-select label="Groupe" dense class="col-5" :options="articleGroupeOptions" @input-value="onChangedArticleGroupe"
-                :model-value="$attrs.article.item.groupe" use-input fill-input input-debounce="0" hide-selected
+                :model-value="$attrs.article.item.group.name" use-input fill-input input-debounce="0" hide-selected
             >
                 <template v-slot:prepend><q-icon name="label" /></template>
             </q-select>
@@ -42,7 +42,7 @@
                 <template v-slot:prepend><q-icon name="tag" /></template>
             </q-input>
 
-            <q-input v-model="$attrs.article.remise" label="Remise" :dense="true">
+            <q-input v-model="$attrs.article.remise" label="Remise" :dense="true" type="number">
                 <template v-slot:prepend><q-icon name="discount" /></template>
             </q-input>
         </q-card-section>
@@ -59,11 +59,12 @@
 
     </q-card-section>
 
-    <q-card-actions align="right" class="bg-white text-teal" v-if="$attrs.editMode">
-        <q-btn flat label="OK" v-close-popup />
+    <q-card-actions align="right" class="bg-white text-teal" v-if="$attrs.canCreate">
+        <q-btn flat label="OK" color="blue" v-close-popup />
+        <q-btn flat label="Cancel" color="red" v-close-popup />
     </q-card-actions>
-    <q-card-actions horizontal align="right" class="justify-start q-px-md" v-else>
-        <q-btn flat round color="blue" icon="edit" @click="$emit('onEditItem', $attrs.index)" v-if="!$attrs.formDisabled" />
+    <q-card-actions horizontal align="right" class="justify-start q-px-md" v-else-if="$attrs.canEdit">
+        <q-btn flat round color="blue" icon="edit" @click="$emit('onEditItem', $attrs.index)" />
         <q-btn flat round color="red" icon="delete" @click="$emit('onDeleteItem', $attrs.index)" />
     </q-card-actions>
     </q-card>
@@ -72,7 +73,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-import { Article, TDCCategory, TDCGroup } from '../../models/models';
+import { Article, TDCAttachement, TDCCategory, TDCGroup } from '../../models/models';
 
 import ImageApi from '../../api/imagesApi';
 import CompletionApi from '../../api/completionApi';
@@ -94,7 +95,7 @@ export default defineComponent({
     }
   },
   mounted() {
-      if (this.shop && this.$attrs.editMode) {
+      if (this.shop && this.$attrs.canCreate) {
         CompletionApi.getCompletionOnChangedShopName(this.shop)
         .then((r) => {
             this.identOptions = r.data.item_ident;
@@ -115,18 +116,22 @@ export default defineComponent({
     },
     onChangedIdent(ident : string) {
       let article = this.$attrs.article as Article;
-      article.item.ident = ident;
-      if (this.shop && article.item.ident && article.item.ident.length > 2 && this.filteredIdentOptions.length > 0) {
+      if (article.item.ident != ident) {
+        article.item.ident = ident;
+      }
+      if (this.shop && article.item.ident && article.item.ident.length > 2 && this.filteredIdentOptions.length === 1) {
           CompletionApi.getCompletionOnChangedArticleIdent(this.shop, article.item.ident)
           .then((r) => {
                 article.item.prix = r.data.prix;
-                article.item.name = r.data.name;
-                article.item.category = r.data.category;
-                article.item.group = r.data.group;
-                article.quantity = r.data.quant;
-                article.remise = r.data.remise;
+                article.item.name = (r.data.name)? r.data.name : ident;
+                article.item.category = (r.data.category)? r.data.category : { name: '', id: 0, required: false} as TDCCategory;
+                article.item.group = (r.data.group)? r.data.group : { name: '', id: 0 } as TDCGroup;
+                article.item.attachement = (r.data.attachement)? r.data.attachement : {} as TDCAttachement;
+                article.quantity = (r.data.quant)? r.data.quant : 1;
+                article.remise = (r.data.remise)? r.data.remise : 0.0;
                 this.src = ImageApi.getImage('articles', ident);
           })
+          .catch()
       }
     },
     // eslint-disable-next-line

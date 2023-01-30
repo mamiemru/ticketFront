@@ -86,10 +86,10 @@ export default defineComponent({
       if (this.shop) {
         CompletionApi.getCompletionOnChangedShopName(this.shop)
         .then((r) => {
-            this.identOptions = r.data.articleId;
-            this.filteredIdentOptions = r.data.articleId;
-            this.articleCategoriesOptions = r.data.articleCategorie;
-            this.articleGroupeOptions = r.data.groupeId;
+            this.identOptions = r.data.item_ident;
+            this.filteredIdentOptions = r.data.item_ident;
+            this.articleCategoriesOptions = r.data.item_category;
+            this.articleGroupeOptions = r.data.item_group;
         })
       }
   },
@@ -104,16 +104,16 @@ export default defineComponent({
     },
     onChangedIdent(ident : string) {
       let article = this.$attrs.editArticleField as Article;
-      article.item.id = ident;
-      if (this.shop && article.item.id && article.item.id.length > 2 && this.filteredIdentOptions.length > 0) {
-          CompletionApi.getCompletionOnChangedArticleIdent(this.shop, article.item.id)
+      article.item.ident = ident;
+      if (this.shop && article.item.id && article.item.ident.length > 2 && this.filteredIdentOptions.length > 0) {
+          CompletionApi.getCompletionOnChangedArticleIdent(this.shop, article.item.ident)
           .then((r) => {
-                article.item.prix = r.data.articlePrix;
-                article.item.name = r.data.articleName;
-                article.item.category = {name: r.data.articleCategorie} as TDCCategory;
-                article.item.group = { name: r.data.groupeId } as TDCGroup;
-                article.quantity = r.data.articleQuant;
-                article.remise = r.data.articleRemise;
+                article.item.prix = r.data.prix;
+                article.item.name = r.data.name;
+                article.item.category = r.data.category;
+                article.item.group = r.data.group;
+                article.quantity = r.data.quant;
+                article.remise = r.data.remise;
                 this.src = ImageApi.getImage('articles', ident);
           })
       }

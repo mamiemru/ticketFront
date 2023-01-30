@@ -25,8 +25,8 @@ export interface TDCCategory {
 }
 
 export interface TDCGroup {
-  id: number;
-  name: string;
+  id?: number;
+  name?: string;
 }
 
 export interface ShopNameResponse {
@@ -48,6 +48,7 @@ export interface OnChangedShopNameResponse {
 export interface OnChangedArticleIdentResponse {
   name: string;
   category: TDCCategory;
+  attachement: TDCAttachement;
   prix: number;
   group: TDCGroup;
   quant: number;

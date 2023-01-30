@@ -40,11 +40,12 @@ class TicketdecaisseApi {
 
     static postTicketDeCaisse(tdc : TicketDeCaisse): Promise<AxiosResponse<TicketDeCaisse>> {
         return axiosConfig.post<TicketDeCaisse>(
-            'TicketDeCaisse/tdc',
-            { shop: tdc.shop, localisation: tdc.localisation, date: tdc.date, categorie: tdc.category, articles: tdc.articles },
+            'ticket_de_caisse/',
+            tdc,
             {
                 headers: {
-                    Accept: 'application/json'
+                    Accept: 'application/json',
+                    'Content-type': 'application/json'
                 },
             },
         );

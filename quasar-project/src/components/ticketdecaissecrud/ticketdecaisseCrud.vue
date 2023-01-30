@@ -1,13 +1,13 @@
 <template>
     <div class="q-pa-md">
       {{ tdc }}
-        <div class="row justify-between">
+        <div class="row justify-between" v-if="$attrs.canEdit">
           <q-btn class="col-2" flat color="green" icon="save" @click="submitTicketDeCaisse" label="Sauver et Envoyer" :disabled="!isTdcFIlledIn()" />
           <q-btn class="col-2" flat color="red" icon="delete" label="Abandonner" @click="leaveTicketDeCaisse" />
         </div>
         <div class="row items-start justify-around">
             <div class="col-6 q-gutter-y-md column">
-                <div class="row items-start justify-around">
+              <div class="row items-start justify-around" v-if="$attrs.canEdit">
                 <q-select label="Shop" dense class="col-5" @input-value="onChangedShop" 
                   :options="filteredShopNameOptions"
                   :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
@@ -34,29 +34,39 @@
                 >
                     <template v-slot:prepend><q-icon name="category" /></template>
                 </q-select>
-                </div>
-                <div class="row justify-around">
-                    <q-btn outline color="green" icon="add_shopping_cart" @click="addNewArticle" label="Ajouter un article manuellement" :disabled="!tdc.shop && !tdc.localisation"/>
-                    <q-btn outline color="green" icon="add_photo_alternate" @click="addNewArticle" label="Ajouter un article via la galery" disabled />
-                </div>
-                <div :key="articlesListKey" >
-                <article-crud v-for="(article, i) in tdc.articles" :key="i" 
-                    :editMode="false" :index="i" @onDeleteItem="onDeleteItem" @onEditItem="onEditItem"
-                    :shop="tdc.shop.name" :localisation="tdc.localisation.name" :categorie="tdc.category.name"
-                    :article="article"
-                />
-                </div>
+              </div>
+              <div class="row items-start justify-around" v-else>
+                <q-input v-model="tdc.shop.name" label="Shop" :dense="true" disable class="col-5" />
+                <q-input v-model="tdc.localisation.name" label="Localisation" :dense="true" disable class="col-5" />
+                <q-input v-model="tdc.date" label="Date" :dense="true" disable class="col-5" />
+                <q-input v-model="tdc.category.name" label="Catégorie" :dense="true" disable class="col-5" />
+              </div>
+
+              <div class="row justify-around" v-if="$attrs.canEdit">
+                  <q-btn outline color="green" icon="add_shopping_cart" @click="addNewArticle" label="Ajouter un article manuellement" :disabled="!tdc.shop && !tdc.localisation"/>
+                  <q-btn outline color="green" icon="add_photo_alternate" @click="addNewArticle" label="Ajouter un article via la galery" disabled />
+              </div>
+              <div :key="articlesListKey" >
+              <article-crud v-for="(article, i) in tdc.articles" :key="i" 
+                  :canCreate="false" :canEdit="$attrs.canEdit" :canDelete="true"
+                  :index="i" @onDeleteItem="onDeleteItem" @onEditItem="onEditItem"
+                  :shop="tdc.shop.name" :localisation="tdc.localisation.name" :categorie="tdc.category.name"
+                  :article="article"
+              />
             </div>
-            <q-card class="my-card col-5" v-if="tdc.attachement && tdc.attachement.image">
-                <q-card-section class="col-5 flex flex-center ">
-                    <q-img :src="tdc.attachement.image" />
-                </q-card-section>
-            </q-card>
+          </div>
+          <q-card class="my-card col-5" v-if="tdc.attachement && tdc.attachement.image">
+              <q-card-section class="col-5 flex flex-center ">
+                  <q-img :src="tdc.attachement.image" />
+              </q-card-section>
+          </q-card>
         </div>
         <q-dialog persistent transition-show="scale" transition-hide="scale" v-model="showEditArticle"
             @before-hide="saveNewArticle"
         >
-            <article-crud :editMode="true" :index="-1" @onDeleteItem="null" @onEditItem="null" 
+            <article-crud 
+              :canCreate="true" :canEdit="false" :canDelete="false"
+              :index="-1" @onDeleteItem="null" @onEditItem="null" 
               :shop="tdc.shop.name" :localisation="tdc.localisation.name" :categorie="tdc.category.name" 
               :article="editArticleField"
             />
@@ -67,7 +77,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-import { Article, ItemArticle, TDCCategory, TDCGroup, TDCLocalisation, TDCShop } from '../../models/models';
+import { Article, ItemArticle, TDCAttachement, TDCCategory, TDCGroup, TDCLocalisation, TDCShop } from '../../models/models';
 import { TicketDeCaisse } from '../../models/models';
 import { OnChangedShopNameResponse } from '../../models/models'
 
@@ -92,7 +102,7 @@ export default defineComponent({
       categoriesNameOptions: [] as TDCCategory[],
       informationsOptions: {} as OnChangedShopNameResponse,
       showEditArticle: false,
-      editArticleField: { item : {} as ItemArticle } as Article
+      editArticleField: { item : { group: {} as TDCGroup, attachement: {} as TDCAttachement, category: {} as TDCCategory } as ItemArticle } as Article
     }
   },
   setup(props, context) {
@@ -123,12 +133,14 @@ export default defineComponent({
   },
   methods: {
     addNewArticle() {
-        this.editArticleField = { item : {} as ItemArticle } as Article;
-        this.showEditArticle = true;
+      this.editArticleField = { item : { group: {} as TDCGroup, attachement: {} as TDCAttachement, category: {} as TDCCategory } as ItemArticle } as Article
+      this.showEditArticle = true;
     },
     saveNewArticle() {
+      if (this.editArticleField.item.ident) {
         this.tdc.articles.push(this.editArticleField);
         this.showEditArticle = false;
+      }
     },
     ticketImage() {
       return (this.tdcId) ? ImageApi.getImage('tickets', this.tdcId as string) : '';
@@ -186,19 +198,9 @@ export default defineComponent({
     },
     submitTicketDeCaisse () {
       if (this.tdc) {
-        if (this.tdcId) {
-          TicketdecaisseApi.putTicketDeCaisse(this.tdc, this.tdcId)
-          .then(() => {
-            this.$router.push({ path: '/' })
-          })
-          .catch((r) => {
-            console.log(r);
-            alert(r);
-          });
-        } else {
           TicketdecaisseApi.postTicketDeCaisse(this.tdc)
           .then(() => {
-            this.$router.push({ path: '/' })
+            alert('ok')
           })
           .catch((r) => {
             console.log(r);
@@ -208,5 +210,5 @@ export default defineComponent({
       }
     }
   }
-})
+)
 </script>

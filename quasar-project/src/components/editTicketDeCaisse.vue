@@ -135,7 +135,7 @@ export default defineComponent({
           CompletionApi.getCompletionOnChangedShopName(this.tdc.shop.name)
           .then((r) => {
             this.informationsOptions = r.data;
-            this.tdc.category.name = this.informationsOptions.categorie;
+            this.tdc.category.name = this.informationsOptions.tdc_category[0];
           })
       }
     },
