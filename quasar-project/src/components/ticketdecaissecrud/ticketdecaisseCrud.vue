@@ -107,6 +107,12 @@ export default defineComponent({
   },
   setup(props, context) {
     let tdc = context.attrs.tdc as TicketDeCaisse;
+    if (tdc.shop === null) {
+      tdc.shop = {} as TDCShop;
+    }
+    if (tdc.localisation === null) {
+      tdc.localisation = {} as TDCLocalisation;
+    }
     if (tdc.category === null) {
       tdc.category = {} as TDCCategory;
     }
@@ -167,7 +173,8 @@ export default defineComponent({
           CompletionApi.getCompletionOnChangedShopName(this.tdc.shop.name)
           .then((r) => {
             this.informationsOptions = r.data;
-            this.tdc.category.name = this.informationsOptions.item_category[0];
+            this.onChangedCategorie(this.informationsOptions.item_category[0]);
+            this.onChangedLocalisation(this.informationsOptions.tdc_localisation[0]);
           })
       }
     },

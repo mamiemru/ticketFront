@@ -88,14 +88,6 @@
               </div>
             </div>
           </div>
-
-          <q-inner-loading
-            :showing="isFileUploading"
-            label="Please wait..."
-            label-class="text-teal"
-            label-style="font-size: 1.1em"
-          />
-
         </q-stepper-navigation>
       </q-step>
 
@@ -106,7 +98,14 @@
         :done="step > 4"
       >
         <q-stepper-navigation>
-          <ticket-de-caisse-crud v-if="editTdc" :tdc="tdc" />
+          <q-inner-loading
+            :showing="isFileUploading"
+            label="Please wait..."
+            label-class="text-teal"
+            label-style="font-size: 1.1em"
+          />
+
+          <ticket-de-caisse-crud v-if="editTdc" :tdc="tdc" :canEdit="true" :canDelete="true" />
         </q-stepper-navigation>
       </q-step>
 
@@ -119,7 +118,7 @@ import { defineComponent } from 'vue'
 
 import TicketDeCaisseCrud from '../components/ticketdecaissecrud/ticketdecaisseCrud.vue';
 
-import { TDCCategory } from '../models/models';
+import { Article, TDCAttachement, TDCCategory, TDCLocalisation, TDCShop } from '../models/models';
 import { TicketDeCaisse } from '../models/models';
 import MLApi from '../api/mlApi';
 
@@ -166,6 +165,12 @@ export default defineComponent({
       }
     },
     createEmptyTdc() {
+      this.isFileUploading = false;
+      this.step = 4;
+      this.tdc = {
+        shop: {} as TDCShop, localisation: {} as TDCLocalisation, category: {} as TDCCategory, attachement: {} as TDCAttachement,
+        articles: [] as Article[]
+      } as TicketDeCaisse;
       this.editTdc = true;
     }
   }
