@@ -1,5 +1,5 @@
 <template>
-    <q-card class="text-grey" style="width: 90%">
+    <q-card class="text-grey" style="width: 50%">
 
     <q-card-section v-if="$attrs.canCreate">
         <div class="text-h6">Ajouter un article</div>

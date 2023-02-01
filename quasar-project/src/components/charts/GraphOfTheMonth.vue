@@ -8,7 +8,7 @@
 
 import { defineComponent } from 'vue';
 
-import FeuilleApi from '../api/feuilleApi';
+import FeuilleApi from '../../api/feuilleApi';
 
 export default defineComponent({
   name: 'GraphOfTheMonth',

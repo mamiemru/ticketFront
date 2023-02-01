@@ -1,53 +1,63 @@
 <template>
-    <div class="q-pa-md">
-      {{ tdc }}
-        <div class="row justify-between" v-if="$attrs.canEdit">
+    <div class="q-py-md">
+        <div class="row justify-between q-py-md" v-if="$attrs.canEdit">
           <q-btn class="col-2" flat color="green" icon="save" @click="submitTicketDeCaisse" label="Sauver et Envoyer" :disabled="!isTdcFIlledIn()" />
           <q-btn class="col-2" flat color="red" icon="delete" label="Abandonner" @click="leaveTicketDeCaisse" />
         </div>
-        <div class="row items-start justify-around">
-            <div class="col-6 q-gutter-y-md column">
-              <div class="row items-start justify-around" v-if="$attrs.canEdit">
-                <q-select label="Shop" dense class="col-5" @input-value="onChangedShop" 
-                  :options="filteredShopNameOptions"
-                  :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
-                  :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'"
-                  :model-value="tdc.shop" use-input fill-input input-debounce="0" hide-selected @filter="filterFn"
-                >
-                    <template v-slot:prepend><q-icon name="store" /></template>
-                </q-select>
-                <q-select label="Localisation" dense class="col-5" @input-value="onChangedLocalisation" 
-                    :options="informationsOptions.localisation" 
+        <div class="row justify-end q-py-md" v-else-if="$attrs.canDelete">
+          <q-btn class="col-2" flat color="red" icon="delete" label="Supprimer" @click="onDeleteTdc" />
+        </div>
+        <div class="row items-start justify-around q-py-md" style="width: 100%;">
+
+          <div class="col-7 column justify-between">
+            <div class="row">
+              <div class="col-10">
+                <div class="row items-start justify-around" v-if="$attrs.canEdit">
+                  <q-select label="Shop" dense class="col-6" @input-value="onChangedShop" 
+                    :options="filteredShopNameOptions"
                     :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
                     :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'"
-                    :model-value="tdc.localisation" use-input fill-input input-debounce="0" hide-selected
-                >
-                    <template v-slot:prepend><q-icon name="gps_fixed" /></template>
-                </q-select>
-                <q-date-time-picker :tdc="tdc" class="col-5"
-                />
-                <q-select label="Catégorie" dense class="col-5" @input-value="onChangedCategorie"
-                  :options="categoriesNameOptions" 
-                  :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
-                  :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'"
-                  :model-value="tdc.category" use-input fill-input input-debounce="0" hide-selected
-                >
-                    <template v-slot:prepend><q-icon name="category" /></template>
-                </q-select>
+                    :model-value="tdc.shop" use-input fill-input input-debounce="0" hide-selected @filter="filterFn"
+                  >
+                      <template v-slot:prepend><q-icon name="store" /></template>
+                  </q-select>
+                  <q-select label="Localisation" dense class="col-6" @input-value="onChangedLocalisation" 
+                      :options="informationsOptions.localisation" 
+                      :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
+                      :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'"
+                      :model-value="tdc.localisation" use-input fill-input input-debounce="0" hide-selected
+                  >
+                      <template v-slot:prepend><q-icon name="gps_fixed" /></template>
+                  </q-select>
+                  <q-date-time-picker :tdc="tdc" class="col-6"
+                  />
+                  <q-select label="Catégorie" dense class="col-6" @input-value="onChangedCategorie"
+                    :options="categoriesNameOptions" 
+                    :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
+                    :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'"
+                    :model-value="tdc.category" use-input fill-input input-debounce="0" hide-selected
+                  >
+                      <template v-slot:prepend><q-icon name="category" /></template>
+                  </q-select>
+                </div>
+                <div class="row items-start justify-around" v-else>
+                  <q-input v-model="tdc.shop.name" label="Shop" :dense="true" disable class="col-5" />
+                  <q-input v-model="tdc.localisation.name" label="Localisation" :dense="true" disable class="col-5" />
+                  <q-input v-model="tdc.date" label="Date" :dense="true" disable class="col-5" />
+                  <q-input v-model="tdc.category.name" label="Catégorie" :dense="true" disable class="col-5" />
+                </div>
               </div>
-              <div class="row items-start justify-around" v-else>
-                <q-input v-model="tdc.shop.name" label="Shop" :dense="true" disable class="col-5" />
-                <q-input v-model="tdc.localisation.name" label="Localisation" :dense="true" disable class="col-5" />
-                <q-input v-model="tdc.date" label="Date" :dense="true" disable class="col-5" />
-                <q-input v-model="tdc.category.name" label="Catégorie" :dense="true" disable class="col-5" />
+              <div class="col-2">
+                <p>Total: {{ tdc.total }}</p>
               </div>
+            </div>
 
-              <div class="row justify-around" v-if="$attrs.canEdit">
-                  <q-btn outline color="green" icon="add_shopping_cart" @click="addNewArticle" label="Ajouter un article manuellement" :disabled="!tdc.shop && !tdc.localisation"/>
-                  <q-btn outline color="green" icon="add_photo_alternate" @click="addNewArticle" label="Ajouter un article via la galery" disabled />
-              </div>
-              <div :key="articlesListKey" >
-              <article-crud v-for="(article, i) in tdc.articles" :key="i" 
+            <div class="row justify-around" v-if="$attrs.canEdit">
+              <q-btn outline color="green" icon="add_shopping_cart" @click="addNewArticle" label="Ajouter un article manuellement" :disabled="!tdc.shop && !tdc.localisation"/>
+              <q-btn outline color="green" icon="add_photo_alternate" @click="addNewArticle" label="Ajouter un article via la galery" disabled />
+            </div>
+            <div :key="articlesListKey" class="row q-py-md">
+              <article-crud class="col-6" v-for="(article, i) in tdc.articles" :key="i" 
                   :canCreate="false" :canEdit="$attrs.canEdit" :canDelete="true"
                   :index="i" @onDeleteItem="onDeleteItem" @onEditItem="onEditItem"
                   :shop="tdc.shop.name" :localisation="tdc.localisation.name" :categorie="tdc.category.name"
@@ -55,10 +65,8 @@
               />
             </div>
           </div>
-          <q-card class="my-card col-5" v-if="tdc.attachement && tdc.attachement.image">
-              <q-card-section class="col-5 flex flex-center ">
-                  <q-img :src="tdc.attachement.image" />
-              </q-card-section>
+          <q-card class="my-card col-4" flat bordered v-if="tdc.attachement && tdc.attachement.image">
+            <q-img :src="tdc.attachement.image" />
           </q-card>
         </div>
         <q-dialog persistent transition-show="scale" transition-hide="scale" v-model="showEditArticle"
@@ -76,9 +84,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { useQuasar } from 'quasar'
 
-import { Article, ItemArticle, TDCAttachement, TDCCategory, TDCGroup, TDCLocalisation, TDCShop } from '../../models/models';
-import { TicketDeCaisse } from '../../models/models';
+import { TDCAttachement, TDCCategory, TDCGroup, TDCLocalisation, TDCShop } from '../../models/models';
+import { TicketDeCaisse, Article, ItemArticle } from '../../models/models';
 import { OnChangedShopNameResponse } from '../../models/models'
 
 import ImageApi from '../../api/imagesApi'
@@ -87,8 +96,8 @@ import CompletionApi from '../../api/completionApi'
 import TDCCategoryApi from '../../api/tdcCategoryApi'
 import TicketdecaisseApi from '../../api/ticketdecaisseApi'
 
-import QDateTimePicker from '../QDateTimePicker.vue'
 import ArticleCrud from './articleCrud.vue'
+import QDateTimePicker from '../QDateTimePicker.vue'
 
 export default defineComponent({
   name: 'TicketDeCaisseCrud',
@@ -106,6 +115,7 @@ export default defineComponent({
     }
   },
   setup(props, context) {
+    const q = useQuasar()
     let tdc = context.attrs.tdc as TicketDeCaisse;
     if (tdc.shop === null) {
       tdc.shop = {} as TDCShop;
@@ -116,6 +126,9 @@ export default defineComponent({
     if (tdc.category === null) {
       tdc.category = {} as TDCCategory;
     }
+    if (tdc.articles === null) {
+      tdc.articles = [] as Article[];
+    }
     for (let article of tdc.articles) {
       if (article.item.group === null) {
         article.item.group = {} as TDCGroup;
@@ -125,7 +138,7 @@ export default defineComponent({
       }
     }
     return {
-      tdc
+      tdc, q
     }
   },
   mounted() {
@@ -161,6 +174,20 @@ export default defineComponent({
       articles.splice(index, 1);
       this.tdc.articles = articles;
       this.articlesListKey += 1;
+    },
+    onDeleteTdc() {
+      this.q.dialog({
+        title: 'Confirmation',
+        message: `Confirmation de suppresion du tdc ${this.tdc.id}`,
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        TicketdecaisseApi.deleteTicketDeCaisse(this.tdc.id)
+        .then(() => {
+          this.$router.push({ path: '/' });
+        })
+        .catch((r) => { alert(r); console.log(r); })
+      })
     },
     onChangedShop(shopName : string) {
       if (this.tdc.shop === null) {

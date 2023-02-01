@@ -19,9 +19,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { TicketDeCaisseHeaderResponse } from '../models/models';
+import { TicketDeCaisseHeaderResponse } from '../../models/models';
 
-import TicketdecaisseApi from '../api/ticketdecaisseApi'
+import TicketdecaisseApi from '../../api/ticketdecaisseApi'
 
 export default defineComponent({
   name: 'TicketDeCaisseListSummary',

@@ -29,7 +29,7 @@ class TicketdecaisseApi {
 
     static deleteTicketDeCaisse(tdcId : string): Promise<AxiosResponse<TicketDeCaisse>> {
         return axiosConfig.delete<TicketDeCaisse>(
-            `TicketDeCaisse/tdc/${tdcId}`,
+            `ticket_de_caisse/${tdcId}/`,
             {
                 headers: {
                     Accept: 'application/json'

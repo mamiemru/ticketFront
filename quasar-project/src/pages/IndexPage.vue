@@ -4,7 +4,7 @@
     <div class="col-7">
       <div class="q-pa-md q-gutter-sm row justify-between">
         <q-btn @click="pmonth" align="around" class="btn-fixed-width" color="primary" label="Mois précédant"></q-btn>
-        <p>{{ feuille_id }}</p>
+        <p>{{ feuille_date }}</p>
         <q-btn @click="nmonth" align="around" class="btn-fixed-width" color="primary" label="Mois suivant"></q-btn>
       </div>
       <table-of-the-month :feuille_id='feuille_id' />
@@ -19,11 +19,11 @@
 <script lang="ts">
 import { defineComponent, defineAsyncComponent } from 'vue';
 
-const GraphOfTheMonth = defineAsyncComponent(() => import('../components/GraphOfTheMonth.vue'))
+const GraphOfTheMonth = defineAsyncComponent(() => import('../components/charts/GraphOfTheMonth.vue'))
 
-import TicketDeCaisseListSummary from '../components/ticketDeCaisseListSummary.vue';
-import SummaryOfTheMonth from '../components/summaryOfTheMonth.vue';
-import TableOfTheMonth from '../components/tableOfTheMonth.vue';
+import TicketDeCaisseListSummary from '../components/mainPaage/ticketDeCaisseListSummary.vue';
+import SummaryOfTheMonth from '../components/mainPaage/summaryOfTheMonth.vue';
+import TableOfTheMonth from '../components/mainPaage/tableOfTheMonth.vue';
 
 import { FeuilleIds } from '../models/models';
 
@@ -35,6 +35,7 @@ export default defineComponent({
   data() {
     return {
       feuille_id: 0,
+      feuille_date: '' as string,
       selectedIndex: 0,
       datas: [] as FeuilleIds[]
     }
@@ -53,6 +54,10 @@ export default defineComponent({
     },
     changeYearMonth() {
       this.feuille_id = this.datas[this.selectedIndex].id;
+      
+      let date = new Date(this.datas[this.selectedIndex].date * 1000);
+      let months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+      this.feuille_date = `${months[date.getMonth()]} ${date.getFullYear()}`;
     },
     getDatas() {
       FeuilleApi.getYearMonth()

@@ -6,11 +6,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { TableFeuilleResponse } from '../models/models';
+import { TableFeuilleResponse } from '../../models/models';
 
 import tableCard from './tableCard.vue';
 
-import FeuilleApi from '../api/feuilleApi';
+import FeuilleApi from '../../api/feuilleApi';
 
 export default defineComponent({
   components: { tableCard },

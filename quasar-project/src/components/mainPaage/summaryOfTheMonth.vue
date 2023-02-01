@@ -19,9 +19,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { TableFeuilleSummary } from '../models/models';
+import { TableFeuilleSummary } from '../../models/models';
 
-import FeuilleApi from '../api/feuilleApi';
+import FeuilleApi from '../../api/feuilleApi';
 
 export default defineComponent({
   name: 'SummaryOfTheMonth',

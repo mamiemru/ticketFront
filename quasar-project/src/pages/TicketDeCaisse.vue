@@ -1,5 +1,5 @@
 <template>
-  <ticket-de-caisse-crud :tdc="tdc" :canEdit="false" :canDelete="true" />
+  <ticket-de-caisse-crud v-if="tdcId" :tdc="tdc" :canEdit="false" :canDelete="true" />
 </template>
 
 <script lang="ts">
@@ -19,10 +19,11 @@ export default defineComponent({
     }
   },  
   created() {
-    this.tdcId = this.$route.params.tdcId as string;
-    TicketdecaisseApi.getTicketDeCaisse(this.tdcId)
+    let tdcId = this.$route.params.tdcId as string;
+    TicketdecaisseApi.getTicketDeCaisse(tdcId)
       .then((r) => {
         this.tdc = r.data;
+        this.tdcId = this.tdc.id;
       })
       .catch((r) => {
         alert(r);
