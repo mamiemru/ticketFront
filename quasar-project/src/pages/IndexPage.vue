@@ -3,9 +3,9 @@
     <ticket-de-caisse-list-summary class="col-2" />
     <div class="col-7">
       <div class="q-pa-md q-gutter-sm row justify-between">
-        <q-btn @click="pmonth" align="around" class="btn-fixed-width" color="primary" label="Mois précédant"></q-btn>
+        <q-btn @click="pmonth" align="left" class="btn-fixed-width" color="primary" label="Mois précédant"></q-btn>
         <p>{{ feuille_date }}</p>
-        <q-btn @click="nmonth" align="around" class="btn-fixed-width" color="primary" label="Mois suivant"></q-btn>
+        <q-btn @click="nmonth" align="right" class="btn-fixed-width" color="primary" label="Mois suivant"></q-btn>
       </div>
       <table-of-the-month :feuille_id='feuille_id' />
     </div>

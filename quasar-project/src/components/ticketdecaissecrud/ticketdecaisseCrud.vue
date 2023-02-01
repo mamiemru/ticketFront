@@ -1,5 +1,6 @@
 <template>
     <div class="q-py-md">
+      {{ tdc }}
         <div class="row justify-between q-py-md" v-if="$attrs.canEdit">
           <q-btn class="col-2" flat color="green" icon="save" @click="submitTicketDeCaisse" label="Sauver et Envoyer" :disabled="!isTdcFIlledIn()" />
           <q-btn class="col-2" flat color="red" icon="delete" label="Abandonner" @click="leaveTicketDeCaisse" />
@@ -13,28 +14,28 @@
             <div class="row">
               <div class="col-10">
                 <div class="row items-start justify-around" v-if="$attrs.canEdit">
-                  <q-select label="Shop" dense class="col-6" @input-value="onChangedShop" 
+                  <q-select label="Shop" dense class="col-5" @input-value="onChangedShop" 
                     :options="filteredShopNameOptions"
                     :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
-                    :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'"
-                    :model-value="tdc.shop" use-input fill-input input-debounce="0" hide-selected @filter="filterFn"
+                    :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : ''"
+                    :model-value="tdc.shop" use-input fill-input input-debounce="0" hide-selected @filter="filterShops"
                   >
                       <template v-slot:prepend><q-icon name="store" /></template>
                   </q-select>
-                  <q-select label="Localisation" dense class="col-6" @input-value="onChangedLocalisation" 
-                      :options="informationsOptions.localisation" 
+                  <q-select label="Localisation" dense class="col-5" @input-value="onChangedLocalisation" :key="tdcKey"
+                      :options="filteredLocalisationNameOptions" 
                       :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
-                      :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'"
-                      :model-value="tdc.localisation" use-input fill-input input-debounce="0" hide-selected
+                      :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : ''"
+                      :model-value="tdc.localisation" use-input fill-input input-debounce="0" hide-selected @filter="filterLocalisations"
                   >
                       <template v-slot:prepend><q-icon name="gps_fixed" /></template>
                   </q-select>
-                  <q-date-time-picker :tdc="tdc" class="col-6"
+                  <q-date-time-picker :tdc="tdc" class="col-5"
                   />
-                  <q-select label="Catégorie" dense class="col-6" @input-value="onChangedCategorie"
-                    :options="categoriesNameOptions" 
+                  <q-select label="Catégorie" dense class="col-5" @input-value="onChangedCategorie" :key="tdcKey"
+                    :options="filteredCategoriesNameOptions" 
                     :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
-                    :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'"
+                    :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : ''"
                     :model-value="tdc.category" use-input fill-input input-debounce="0" hide-selected
                   >
                       <template v-slot:prepend><q-icon name="category" /></template>
@@ -48,12 +49,14 @@
                 </div>
               </div>
               <div class="col-2">
-                <p>Total: {{ tdc.total }}</p>
+                <q-input v-model="tdc.total" label="Total" :dense="true" disable class="col-5" />
               </div>
             </div>
 
-            <div class="row justify-around" v-if="$attrs.canEdit">
-              <q-btn outline color="green" icon="add_shopping_cart" @click="addNewArticle" label="Ajouter un article manuellement" :disabled="!tdc.shop && !tdc.localisation"/>
+            <div class="row justify-around q-py-md" v-if="$attrs.canEdit">
+              <q-btn outline color="green" icon="add_shopping_cart" @click="addNewArticle" label="Ajouter un article manuellement" 
+                :disabled="!tdc.shop || !tdc.shop.name"
+              />
               <q-btn outline color="green" icon="add_photo_alternate" @click="addNewArticle" label="Ajouter un article via la galery" disabled />
             </div>
             <div :key="articlesListKey" class="row q-py-md">
@@ -67,6 +70,31 @@
           </div>
           <q-card class="my-card col-4" flat bordered v-if="tdc.attachement && tdc.attachement.image">
             <q-img :src="tdc.attachement.image" />
+          </q-card>
+          <q-card class="my-card col-4" flat bordered v-else>
+            <div class="column" v-if="isFileUploading">
+              <q-inner-loading
+                :showing="isFileUploading"
+                label="Please wait..."
+                label-class="text-teal"
+                label-style="font-size: 1.1em"
+              />
+            </div>
+            <div class="column" v-else>
+              <div class="col-4 row justify-around">
+                <h5>Importer une pièce jointe (optionel)</h5>
+              </div> 
+              <div class="col-4 items-center justify-around">  
+                <div class="col-2 q-gutter-y-md column">
+                  <q-file filled v-model="file" label="Choise file" stack-label />
+                </div>
+                <div class="col-2 q-gutter-y-md column">
+                  <q-btn color="black" class="full-width" label="Envoyer"
+                    @click="uploadLateAttachementFile" 
+                  /> 
+                </div>
+              </div>
+            </div>
           </q-card>
         </div>
         <q-dialog persistent transition-show="scale" transition-hide="scale" v-model="showEditArticle"
@@ -95,6 +123,7 @@ import TDCShopApi from '../../api/tdcshopsApi'
 import CompletionApi from '../../api/completionApi'
 import TDCCategoryApi from '../../api/tdcCategoryApi'
 import TicketdecaisseApi from '../../api/ticketdecaisseApi'
+import TDCLocalisationApi from '../../api/tdcLocalisationApi'
 
 import ArticleCrud from './articleCrud.vue'
 import QDateTimePicker from '../QDateTimePicker.vue'
@@ -104,11 +133,17 @@ export default defineComponent({
   components: { ArticleCrud, QDateTimePicker },
   data () {
     return {
+      file: null,
+      isFileUploading: false,
+      tdcKey: 0,
       articlesListKey: 0,
       tdcId: '' as string,
       shopNameOptions: [] as TDCShop[],
-      filteredShopNameOptions: [] as TDCShop[],
       categoriesNameOptions: [] as TDCCategory[],
+      localisationsNameOptions: [] as TDCLocalisation[],
+      filteredShopNameOptions: [] as TDCShop[],
+      filteredCategoriesNameOptions: [] as TDCCategory[],
+      filteredLocalisationNameOptions: [] as TDCLocalisation[],
       informationsOptions: {} as OnChangedShopNameResponse,
       showEditArticle: false,
       editArticleField: { item : { group: {} as TDCGroup, attachement: {} as TDCAttachement, category: {} as TDCCategory } as ItemArticle } as Article
@@ -147,8 +182,13 @@ export default defineComponent({
       this.filteredShopNameOptions = this.shopNameOptions; 
     });
     TDCCategoryApi.getCategories().then((r) => { 
-      this.categoriesNameOptions = r.data 
+      this.categoriesNameOptions = r.data;
+      this.filteredCategoriesNameOptions = this.categoriesNameOptions;
     });
+    TDCLocalisationApi.getLocalisations().then((r) => {
+      this.localisationsNameOptions = r.data;
+      this.filteredLocalisationNameOptions = this.localisationsNameOptions;
+    })
   },
   methods: {
     addNewArticle() {
@@ -159,7 +199,13 @@ export default defineComponent({
       if (this.editArticleField.item.ident) {
         this.tdc.articles.push(this.editArticleField);
         this.showEditArticle = false;
+        this.updateTotal();
       }
+    },
+    updateTotal() {
+      let total = 0;
+      this.tdc.articles.forEach((article) => total += (article.item.prix * article.quantity) - article.remise);
+      this.tdc.total = total;
     },
     ticketImage() {
       return (this.tdcId) ? ImageApi.getImage('tickets', this.tdcId as string) : '';
@@ -173,6 +219,7 @@ export default defineComponent({
       let articles = this.tdc.articles as Array<Article>;
       articles.splice(index, 1);
       this.tdc.articles = articles;
+      this.updateTotal();
       this.articlesListKey += 1;
     },
     onDeleteTdc() {
@@ -195,14 +242,25 @@ export default defineComponent({
       }
       this.tdc.shop.name = shopName;
       if (this.tdc.shop && this.tdc.shop.name && this.tdc.shop.name.length > 2 && this.filteredShopNameOptions.length > 0) {
-          this.tdc.localisation.name = '';
-          this.tdc.category.name = '';
-          CompletionApi.getCompletionOnChangedShopName(this.tdc.shop.name)
-          .then((r) => {
-            this.informationsOptions = r.data;
-            this.onChangedCategorie(this.informationsOptions.item_category[0]);
-            this.onChangedLocalisation(this.informationsOptions.tdc_localisation[0]);
-          })
+        this.tdc.localisation.name = '';
+        this.tdc.category.name = '';
+        CompletionApi.getCompletionOnChangedShopName(this.tdc.shop.name)
+        .then((r) => {
+          this.informationsOptions = r.data;
+
+          // let cetegoriesNeedle = this.informationsOptions.tdc_category.map(v => v.toLowerCase());
+          // let localisationNeedle = this.informationsOptions.tdc_localisation.map(v => v.toLowerCase());
+
+          // this.filteredCategoriesNameOptions = this.categoriesNameOptions.filter(v => v.name.toLocaleLowerCase() in cetegoriesNeedle);
+          // this.filteredLocalisationNameOptions = this.localisationsNameOptions.filter(v => v.name.toLocaleLowerCase() in localisationNeedle);
+
+          this.onChangedCategorie(this.informationsOptions.item_category[0]);
+          this.onChangedLocalisation(this.informationsOptions.tdc_localisation[0]);
+          this.tdcKey += 1;
+        })
+        .catch((r) => {
+          console.log(r);
+        })
       }
     },
     onChangedLocalisation(localisation : string) {
@@ -218,10 +276,17 @@ export default defineComponent({
       this.tdc.category.name = categorieName;
     },
     // eslint-disable-next-line
-    filterFn (val : string, update : any) {
+    filterShops (val : string, update : any) {
       update(() => {
         const needle = val.toLocaleLowerCase()
         this.filteredShopNameOptions = this.shopNameOptions.filter(v => v.name.toLocaleLowerCase().indexOf(needle) > -1)
+      })
+    },
+    // eslint-disable-next-line
+    filterLocalisations (val : string, update : any) {
+      update(() => {
+        const needle = val.toLocaleLowerCase()
+        this.filteredLocalisationNameOptions = this.localisationsNameOptions.filter(v => v.name.toLocaleLowerCase().indexOf(needle) > -1)
       })
     },
     isTdcFIlledIn() {
@@ -240,9 +305,27 @@ export default defineComponent({
             console.log(r);
             alert(r);
           });
-        }
       }
-    }
+    },
+    uploadLateAttachementFile() {
+      if (this.file) {
+        let formData = new FormData();
+        formData.append('image', this.file);
+        formData.append('category', 'ticket');
+        formData.append('name', '');
+        this.isFileUploading = true;
+        ImageApi.uploadAttachment(formData)
+        .then((r) => {
+          this.tdc.attachement = r.data;
+          this.isFileUploading = false;
+        })
+        .catch((r) => {
+          this.isFileUploading = false;
+          alert(r);
+          console.log(r);
+        })
+      }
+    },
   }
-)
+})
 </script>

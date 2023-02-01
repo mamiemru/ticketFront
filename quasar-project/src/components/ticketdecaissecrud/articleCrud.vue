@@ -119,7 +119,7 @@ export default defineComponent({
       if (article.item.ident != ident) {
         article.item.ident = ident;
       }
-      if (this.shop && article.item.ident && article.item.ident.length > 2 && this.filteredIdentOptions.length === 1) {
+      if (this.shop && article.item.ident && article.item.ident.length > 2) {
           CompletionApi.getCompletionOnChangedArticleIdent(this.shop, article.item.ident)
           .then((r) => {
                 article.item.prix = r.data.prix;
