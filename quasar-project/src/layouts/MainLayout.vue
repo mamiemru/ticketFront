@@ -53,19 +53,19 @@ const linksList = [
   {
     title: 'Index',
     caption: 'quasar.dev',
-    icon: 'school',
+    icon: 'home',
     link: '/'
   },  
   {
     title: 'Ajouter Ticket De Caisse',
     caption: 'quasar.dev',
-    icon: 'school',
+    icon: 'post_add',
     link: '/#/addtdc'
   },  
   {
     title: 'Articles',
     caption: 'quasar.dev',
-    icon: 'school',
+    icon: 'format_list_bulleted',
     link: '/#/articles'
   },  
   {

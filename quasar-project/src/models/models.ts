@@ -127,11 +127,20 @@ export interface ItemArticle {
   attachement?: TDCAttachement;
 }
 
+export interface TicketDeCaisseHeader {
+  id: string;
+  shop: TDCShop;
+  localisation: TDCLocalisation;
+  date: string;
+  category: TDCCategory;
+}
+
 export interface Article {
-  quantity: number,
+  quantity: number;
   price: number;
-  remise: number,
-  item: ItemArticle
+  remise: number;
+  item: ItemArticle;
+  tdc: TicketDeCaisseHeader
 }
 
 export interface TicketDeCaisse {
@@ -150,4 +159,78 @@ export interface ItemArticlePagination {
   next: string | null;
   previous: string | null;
   results: ItemArticle[];
+}
+
+export interface ChartSerie {
+  name: string;
+  data: number[];
+}
+
+export interface ChartOptionsText {
+  text?: string;
+}
+
+export interface ChartOptionsAxisTitle {
+  text?: string;
+}
+
+export interface ChartOptionsAxis {
+  categories?: string[];
+  title: ChartOptionsAxisTitle;
+  min?: number;
+  max?: number;
+}
+
+export interface ChartOptions {
+  colors: string[];
+  title: ChartOptionsText;
+  xaxis: ChartOptionsAxis;
+  yaxis: ChartOptionsAxis;
+}
+
+export interface IChartOptionsChart {
+  height: number
+  type: string,
+  dropShadow: {
+    enabled: boolean,
+    color: string,
+    top: number,
+    left: number,
+    blur: number,
+    opacity: number
+  },
+  toolbar: {
+    show: false
+  }
+}
+
+export interface IChartLines {
+  series:  ChartSerie[];
+  chartOptions: ChartOptions;
+}
+
+export class ChartLines implements IChartLines {
+  series = [] as ChartSerie[];
+  chartOptions = {
+    chart: { 
+      height:350, type:'line',
+      dropShadow: { enabled: true, color: '#000', top: 18, left: 7, blur: 10, opacity: 0.2 },
+      toolbar: { show: false }
+    },
+    dataLabels: { enabled: true, },
+    stroke: { curve: 'smooth' },
+    colors: [ '#545454'],
+    title: { text: '', align: 'left' },
+    xaxis: { categories: [], title: { text: '' } } as ChartOptionsAxis,
+    yaxis: { title: { text: '' } } as ChartOptionsAxis,
+    grid: { borderColor: '#e7e7e7', row: { colors: ['#f3f3f3', 'transparent'], opacity: 0.5 } },
+    markers: { size: 1 },
+    legend: {
+      position: 'top',
+      horizontalAlign: 'right',
+      floating: true,
+      offsetY: -25,
+      offsetX: -5
+    }
+  } as ChartOptions;
 }

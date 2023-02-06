@@ -15,6 +15,17 @@ class ItemArticleApi {
             },
         );
     }    
+    
+    static getItemArticlePaginationPerPage(page: string): Promise<AxiosResponse<ItemArticlePagination>> {
+        return axiosConfig.get<ItemArticlePagination>(
+            `/ticket_de_caisse/article/item/?page=${page}`,
+            {
+                headers: {
+                    Accept: 'application/json'
+                },
+            },
+        );
+    }    
 }
 
 export default ItemArticleApi;
