@@ -148,6 +148,7 @@ export default defineComponent({
         let formData = new FormData();
         formData.append('image', this.file);
         formData.append('category', 'ticket');
+        formData.append('type', this.docType);
         formData.append('name', '');
         this.isFileUploading = true;
         MLApi.uploadAttachment(formData)

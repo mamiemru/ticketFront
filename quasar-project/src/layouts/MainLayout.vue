@@ -63,6 +63,12 @@ const linksList = [
     link: '/#/addtdc'
   },  
   {
+    title: 'Articles',
+    caption: 'quasar.dev',
+    icon: 'school',
+    link: '/#/articles'
+  },  
+  {
     title: 'Docs',
     caption: 'quasar.dev',
     icon: 'school',

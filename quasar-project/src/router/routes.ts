@@ -6,7 +6,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: 'tdc/:tdcId', component: () => import('pages/TicketDeCaisse.vue') },
-      { path: 'addtdc', component: () => import('pages/addNewTdcPage.vue') },
+      { path: 'addtdc', component: () => import('pages/AddNewTdcPage.vue') },
+      { path: 'articles', component: () => import('pages/ItemArticles.vue') },
       { path: '', component: () => import('pages/IndexPage.vue') }
     ]
   },

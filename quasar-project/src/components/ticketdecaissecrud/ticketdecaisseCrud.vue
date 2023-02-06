@@ -179,15 +179,16 @@ export default defineComponent({
   mounted() {
     TDCShopApi.getShops().then((r) => { 
       this.shopNameOptions = r.data;
-      this.filteredShopNameOptions = this.shopNameOptions; 
+      console.log(this.shopNameOptions)
+      this.filteredShopNameOptions = this.shopNameOptions as TDCShop[]; 
     });
     TDCCategoryApi.getCategories().then((r) => { 
       this.categoriesNameOptions = r.data;
-      this.filteredCategoriesNameOptions = this.categoriesNameOptions;
+      this.filteredCategoriesNameOptions = this.categoriesNameOptions as TDCCategory[];
     });
     TDCLocalisationApi.getLocalisations().then((r) => {
       this.localisationsNameOptions = r.data;
-      this.filteredLocalisationNameOptions = this.localisationsNameOptions;
+      this.filteredLocalisationNameOptions = this.localisationsNameOptions as TDCLocalisation[];
     })
   },
   methods: {
@@ -204,7 +205,7 @@ export default defineComponent({
     },
     updateTotal() {
       let total = 0;
-      this.tdc.articles.forEach((article) => total += (article.item.prix * article.quantity) - article.remise);
+      this.tdc.articles.forEach((article) => total += ((article.price * article.quantity) - article.remise));
       this.tdc.total = total;
     },
     ticketImage() {
@@ -312,6 +313,7 @@ export default defineComponent({
         let formData = new FormData();
         formData.append('image', this.file);
         formData.append('category', 'ticket');
+        formData.append('type', 'ticket');
         formData.append('name', '');
         this.isFileUploading = true;
         ImageApi.uploadAttachment(formData)

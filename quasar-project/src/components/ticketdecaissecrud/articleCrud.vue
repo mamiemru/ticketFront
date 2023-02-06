@@ -34,7 +34,7 @@
                 <template v-slot:prepend><q-icon name="label" /></template>
             </q-select>
 
-            <q-input v-model="$attrs.article.item.prix" label="Prix" :dense="true">
+            <q-input v-model="$attrs.article.price" label="Prix" :dense="true">
                 <template v-slot:prepend><q-icon name="euro" /></template>
             </q-input>
 
@@ -52,7 +52,7 @@
           <q-input v-model="$attrs.article.item.name" label="Description article" :dense="true" disable />
           <q-input v-model="$attrs.article.item.category.name" label="Categorie" :dense="true" disable />
           <q-input v-model="$attrs.article.item.group.name" label="Groupe" :dense="true" disable />
-          <q-input v-model="$attrs.article.item.prix" label="Prix" :dense="true" disable />
+          <q-input v-model="$attrs.article.price" label="Prix" :dense="true" disable />
           <q-input v-model="$attrs.article.quantity" label="Quantité" :dense="true" disable />
           <q-input v-model="$attrs.article.remise" label="Remise" :dense="true" disable />
         </q-card-section>
@@ -121,14 +121,14 @@ export default defineComponent({
       }
       if (this.shop && article.item.ident && article.item.ident.length > 2) {
           CompletionApi.getCompletionOnChangedArticleIdent(this.shop, article.item.ident)
-          .then((r) => {
-                article.item.prix = r.data.prix;
-                article.item.name = (r.data.name)? r.data.name : ident;
-                article.item.category = (r.data.category)? r.data.category : { name: '', id: 0, required: false} as TDCCategory;
-                article.item.group = (r.data.group)? r.data.group : { name: '', id: 0 } as TDCGroup;
-                article.item.attachement = (r.data.attachement)? r.data.attachement : {} as TDCAttachement;
-                article.quantity = (r.data.quant)? r.data.quant : 1;
+          .then((r) => { 
+                article.item.name = (r.data.item && r.data.item.name)? r.data.item.name : ident;
+                article.item.category = (r.data.item.category && r.data.item.category.name)? r.data.item.category : { name: '', id: 0, required: false} as TDCCategory;
+                article.item.group = (r.data.item.group && r.data.item.group.name)? r.data.item.group : { name: '', id: 0 } as TDCGroup;
+                article.item.attachement = (r.data.item.attachement)? r.data.item.attachement : {} as TDCAttachement;
+                article.quantity = (r.data.quantity)? r.data.quantity : 1;
                 article.remise = (r.data.remise)? r.data.remise : 0.0;
+                article.price = r.data.price;
                 this.src = ImageApi.getImage('articles', ident);
           })
           .catch()

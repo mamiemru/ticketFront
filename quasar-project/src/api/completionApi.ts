@@ -2,7 +2,7 @@
 import { AxiosResponse } from 'axios';
 import { ShopNameResponse } from '../models/models';
 import { OnChangedShopNameResponse } from '../models/models';
-import { OnChangedArticleIdentResponse } from '../models/models';
+import { Article } from '../models/models';
 import axiosConfig from '../api/axiosConfig';
 
 class CompletionApi {
@@ -29,8 +29,8 @@ class CompletionApi {
         );
     }    
     
-    static getCompletionOnChangedArticleIdent(shop : string, itemArticle: string): Promise<AxiosResponse<OnChangedArticleIdentResponse>> {
-        return axiosConfig.get<OnChangedArticleIdentResponse>(
+    static getCompletionOnChangedArticleIdent(shop : string, itemArticle: string): Promise<AxiosResponse<Article>> {
+        return axiosConfig.get<Article>(
             `completion/changed/${shop}/article/item/${itemArticle}/`,
             {
                 headers: {

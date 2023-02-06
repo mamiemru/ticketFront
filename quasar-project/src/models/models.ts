@@ -49,7 +49,7 @@ export interface OnChangedArticleIdentResponse {
   name: string;
   category: TDCCategory;
   attachement: TDCAttachement;
-  prix: number;
+  price: number;
   group: TDCGroup;
   quant: number;
   remise: number;
@@ -121,7 +121,6 @@ export interface FeuilleIds {
 export interface ItemArticle {
   id: number;
   ident: string;
-  prix: number;
   name?: string;
   category?: TDCCategory;
   group?: TDCGroup;
@@ -130,6 +129,7 @@ export interface ItemArticle {
 
 export interface Article {
   quantity: number,
+  price: number;
   remise: number,
   item: ItemArticle
 }
@@ -143,4 +143,11 @@ export interface TicketDeCaisse {
   articles: Article[];
   attachement: TDCAttachement;
   total?: number | null;
+}
+
+export interface ItemArticlePagination {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ItemArticle[];
 }
