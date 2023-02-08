@@ -1,5 +1,6 @@
 <template>
   <q-dialog ref="dialog" @hide="onDialogHide">
+    {{ articleReadonly }}
     <article-crud style="width: 700px; max-width: 80vw;"
         :canCreate="true" :canEdit="false" :canDelete="false"
         :index="-1" @onDeleteItem="null" @onEditItem="null" @onOk="onOKClick" @onCancel="onCancelClick"

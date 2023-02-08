@@ -193,7 +193,9 @@ export default defineComponent({
     },
     onEditItem(index : number) {
       let articles = this.tdc.articles as Array<Article>;
-      this.openArticleCrudDialog(articles.splice(index, 1)[0]);
+      let article = articles.splice(index, 1)[0];
+      console.log(article);
+      this.openArticleCrudDialog(article);
     },
     openArticleCrudDialog(article : Article) {
       this.q.dialog({

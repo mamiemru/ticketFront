@@ -1,5 +1,5 @@
 <template>
-  <q-card class="text-grey">
+  <q-card class="text-grey" flat bordered square>
     <q-card-section v-if="$attrs.canCreate">
       <div class="text-h6">Ajouter un article</div>
     </q-card-section>
@@ -193,6 +193,7 @@ export default defineComponent({
                 article.price = r.data.price;
           })
           .catch(() => {
+            /*
             article.item.name = '';
             article.item.category = { name: '', id: 0, required: false} as TDCCategory;
             article.item.group = { name: '', id: 0 } as TDCGroup;
@@ -200,6 +201,7 @@ export default defineComponent({
             article.quantity = 0
             article.remise = 0.0
             article.price = 0.0
+            */
           })
       }
     },
