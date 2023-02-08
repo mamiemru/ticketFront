@@ -5,8 +5,33 @@
     </q-card-section>
 
     <q-card-section horizontal clas="row">
-      <q-card-section class="col-5">
-        <q-img :src="$attrs.article.item.attachement.image" style="max-height: 290px;" fit="scale-down" v-if="$attrs.article.item.attachement" />
+      <q-card-section class="col-5" v-if="$attrs.article.item.attachement && $attrs.article.item.attachement.image">
+        <q-img :src="$attrs.article.item.attachement.image" style="max-height: 290px;" fit="scale-down" />
+      </q-card-section>
+      <q-card-section class="col-5" v-else-if="$attrs.article.item.ident && $attrs.canCreate">
+        <div class="column" v-if="!isFileUploading">
+          <div class="self-center">
+            <p caption>Importer une illustration (optionel)</p>
+          </div> 
+          <div class="self-center">  
+            <div class="column">
+              <q-file filled v-model="file" label="Choisir fichier" stack-label />
+            </div>
+            <div class="self-center">
+              <q-btn color="black" class="full-width" label="Envoyer"
+                @click="uploadLateAttachementFile" 
+              /> 
+            </div>
+          </div>
+        </div>
+        <q-inner-loading v-else
+          :showing="isFileUploading"
+          label="Please wait..."
+          label-class="text-teal"
+          label-style="font-size: 1.1em"
+        />
+      </q-card-section>
+      <q-card-section class="col-5" v-else>
       </q-card-section>
 
       <q-form @submit="onSubmit" @reset="onReset" class="col-6" v-if="$attrs.canCreate">
@@ -34,7 +59,7 @@
           </q-select>
 
           <q-input v-model="$attrs.article.price" label="Prix" :dense="true"
-            min="0.0" mask="#.#" fill-mask="0"
+            min="0.0"
           >
             <template v-slot:prepend><q-icon name="euro" /></template>
           </q-input>
@@ -46,7 +71,7 @@
           </q-input>
 
           <q-input v-model="$attrs.article.remise" label="Remise" :dense="true" 
-            min="0.0" mask="#.#" fill-mask="0"
+            min="0.0"
           >
             <template v-slot:prepend><q-icon name="discount" /></template>
           </q-input>
@@ -98,7 +123,8 @@ export default defineComponent({
   },
   data () {
     return {
-        src: '' as string,
+        file: null,
+        isFileUploading: false,
         identOptions: [] as string[],
         filteredIdentOptions: [] as string[],
         articleCategoriesOptions: [] as string[],
@@ -165,10 +191,15 @@ export default defineComponent({
                 article.quantity = (r.data.quantity)? r.data.quantity : 1;
                 article.remise = (r.data.remise)? r.data.remise : 0.0;
                 article.price = r.data.price;
-                this.src = ImageApi.getImage('articles', ident);
           })
-          .catch((r) => {
-            console.log(r);
+          .catch(() => {
+            article.item.name = '';
+            article.item.category = { name: '', id: 0, required: false} as TDCCategory;
+            article.item.group = { name: '', id: 0 } as TDCGroup;
+            article.item.attachement = {} as TDCAttachement;
+            article.quantity = 0
+            article.remise = 0.0
+            article.price = 0.0
           })
       }
     },
@@ -178,6 +209,28 @@ export default defineComponent({
           const needle = val.toLocaleLowerCase()
           this.filteredIdentOptions = this.identOptions.filter(v => v.toLocaleLowerCase().indexOf(needle) > -1)
         })
+    },
+
+    uploadLateAttachementFile() {
+      if (this.file) {
+        let formData = new FormData();
+        formData.append('image', this.file);
+        formData.append('category', 'article');
+        formData.append('type', '');
+        formData.append('name', '');
+        this.isFileUploading = true;
+        ImageApi.uploadAttachment(formData)
+        .then((r) => {
+          let article = this.$attrs.article as Article;
+          article.item.attachement = r.data;
+          this.isFileUploading = false;
+        })
+        .catch((r) => {
+          this.isFileUploading = false;
+          alert(r);
+          console.log(r);
+        })
+      }
     }
   }
 })
