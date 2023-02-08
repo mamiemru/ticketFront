@@ -57,9 +57,9 @@ export default defineComponent({
   methods: {
     initShopNameChart() {
       let shopNameChart = new ChartLines();
-      shopNameChart.chartOptions.title.text = "Prix de l'article par magasin et date";
-      shopNameChart.chartOptions.xaxis.title.text = "Date";
-      shopNameChart.chartOptions.yaxis.title.text = "Prix";
+      shopNameChart.chartOptions.title.text = 'Prix de l\'article par magasin et date';
+      shopNameChart.chartOptions.xaxis.title.text = 'Date';
+      shopNameChart.chartOptions.yaxis.title.text = 'Prix';
       this.datas.forEach((article) => {
         let shopName = article.tdc.shop.name;
         let price = article.price;
@@ -82,9 +82,9 @@ export default defineComponent({
     },
     initQuantChart() {
       let quantChart = new ChartLines();
-      quantChart.chartOptions.title.text = "Quantité de l'article par magasin et date";
-      quantChart.chartOptions.xaxis.title.text = "Date";
-      quantChart.chartOptions.yaxis.title.text = "Quantité";
+      quantChart.chartOptions.title.text = 'Quantité de l\'article par magasin et date';
+      quantChart.chartOptions.xaxis.title.text = 'Date';
+      quantChart.chartOptions.yaxis.title.text = 'Quantité';
       this.datas.forEach((article) => {
         let shopName = article.tdc.shop.name;
         let quant = article.quantity;
