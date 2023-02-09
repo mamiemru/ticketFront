@@ -1,6 +1,7 @@
 
 import { AxiosResponse } from 'axios';
 import { ItemArticlePagination } from '../models/models';
+import { ItemArticle } from '../models/models';
 import axiosConfig from '../api/axiosConfig';
 
 class ItemArticleApi {
@@ -25,7 +26,31 @@ class ItemArticleApi {
                 },
             },
         );
-    }    
+    }
+
+    static putItemArticle(itemArticle: ItemArticle): Promise<AxiosResponse<ItemArticle>> {
+        return axiosConfig.put<ItemArticle>(
+            `/ticket_de_caisse/article/item/${itemArticle.id}/`,
+            itemArticle,
+            {
+                headers: {
+                    Accept: 'application/json'
+                },
+            }
+        )
+    }
+
+    static postfilterItemArticle(ident: string): Promise<AxiosResponse<ItemArticlePagination>> {
+        return axiosConfig.post<ItemArticlePagination>(
+            '/ticket_de_caisse/article/item/filter/',
+            { ident },
+            {
+                headers: {
+                    Accept: 'application/json'
+                },
+            }
+        )
+    }
 }
 
 export default ItemArticleApi;

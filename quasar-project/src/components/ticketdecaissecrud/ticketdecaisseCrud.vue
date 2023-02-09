@@ -9,7 +9,6 @@
         <q-btn class="col-2" flat color="red" icon="delete" label="Supprimer" @click="onDeleteTdc" />
       </div>
       <div class="row items-start justify-around q-py-md" style="width: 100%;">
-
         <div class="col-7 column justify-between">
           <div class="row">
             <div class="col-10">
@@ -72,29 +71,7 @@
           <q-img :src="tdc.attachement.image" />
         </q-card>
         <q-card class="my-card col-4" flat bordered v-else>
-          <div class="column" v-if="isFileUploading">
-            <q-inner-loading
-              :showing="isFileUploading"
-              label="Please wait..."
-              label-class="text-teal"
-              label-style="font-size: 1.1em"
-            />
-          </div>
-          <div class="column" v-else>
-            <div class="col-4 row justify-around">
-              <h5>Importer une pièce jointe (optionel)</h5>
-            </div> 
-            <div class="col-4 items-center justify-around">  
-              <div class="col-2 q-gutter-y-md column">
-                <q-file filled v-model="file" label="Choise file" stack-label />
-              </div>
-              <div class="col-2 q-gutter-y-md column">
-                <q-btn color="black" class="full-width" label="Envoyer"
-                  @click="uploadLateAttachementFile" 
-                /> 
-              </div>
-            </div>
-          </div>
+          <attachement-form @submited="onUploadAttachementSubmited" @error="null" category="ticket" type="ticket" />
         </q-card>
       </div>
     </div>
@@ -108,20 +85,20 @@ import { TDCAttachement, TDCCategory, TDCGroup, TDCLocalisation, TDCShop } from 
 import { TicketDeCaisse, Article, ItemArticle } from '../../models/models';
 import { OnChangedShopNameResponse } from '../../models/models'
 
-import ImageApi from '../../api/imagesApi'
 import TDCShopApi from '../../api/tdcshopsApi'
 import CompletionApi from '../../api/completionApi'
 import TDCCategoryApi from '../../api/tdcCategoryApi'
 import TicketdecaisseApi from '../../api/ticketdecaisseApi'
 import TDCLocalisationApi from '../../api/tdcLocalisationApi'
 
+import AttachementForm from '../AttachementForm.vue'
 import ArticleCrud from './articleCrud.vue'
 import QDateTimePicker from '../QDateTimePicker.vue'
 import articleCrudDialogVue from './articleCrudDialog.vue';
 
 export default defineComponent({
   name: 'TicketDeCaisseCrud',
-  components: { ArticleCrud, QDateTimePicker },
+  components: { ArticleCrud, QDateTimePicker, AttachementForm },
   data () {
     return {
       file: null,
@@ -300,26 +277,9 @@ export default defineComponent({
           });
       }
     },
-    uploadLateAttachementFile() {
-      if (this.file) {
-        let formData = new FormData();
-        formData.append('image', this.file);
-        formData.append('category', 'ticket');
-        formData.append('type', 'ticket');
-        formData.append('name', '');
-        this.isFileUploading = true;
-        ImageApi.uploadAttachment(formData)
-        .then((r) => {
-          this.tdc.attachement = r.data;
-          this.isFileUploading = false;
-        })
-        .catch((r) => {
-          this.isFileUploading = false;
-          alert(r);
-          console.log(r);
-        })
-      }
-    },
+    onUploadAttachementSubmited(r : TDCAttachement) {
+          this.tdc.attachement = r;
+    }
   }
 })
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <q-page class="row items-start justify-between" style="max-height: 100%">
+  <q-page class="row items-start justify-between" style="max-width: 100%; max-height: 100%">
     <itemarticlelist />
   </q-page>
 </template>

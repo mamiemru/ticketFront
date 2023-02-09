@@ -9,27 +9,7 @@
         <q-img :src="$attrs.article.item.attachement.image" style="max-height: 290px;" fit="scale-down" />
       </q-card-section>
       <q-card-section class="col-5" v-else-if="$attrs.article.item.ident && $attrs.canCreate">
-        <div class="column" v-if="!isFileUploading">
-          <div class="self-center">
-            <p caption>Importer une illustration (optionel)</p>
-          </div> 
-          <div class="self-center">  
-            <div class="column">
-              <q-file filled v-model="file" label="Choisir fichier" stack-label />
-            </div>
-            <div class="self-center">
-              <q-btn color="black" class="full-width" label="Envoyer"
-                @click="uploadLateAttachementFile" 
-              /> 
-            </div>
-          </div>
-        </div>
-        <q-inner-loading v-else
-          :showing="isFileUploading"
-          label="Please wait..."
-          label-class="text-teal"
-          label-style="font-size: 1.1em"
-        />
+        <attachement-form @submited="onUploadAttachementSubmited" @error="null" category="article" type="" />
       </q-card-section>
       <q-card-section class="col-5" v-else>
       </q-card-section>
@@ -105,13 +85,15 @@
 import { defineComponent } from 'vue'
 import { useQuasar } from 'quasar'
 
+import AttachementForm from '../AttachementForm.vue'
+
 import { Article, TDCAttachement, TDCCategory, TDCGroup } from '../../models/models';
 
-import ImageApi from '../../api/imagesApi';
 import CompletionApi from '../../api/completionApi';
 
 export default defineComponent({
   name: 'EditArticle',
+  components: { AttachementForm },
   props: {
       shop: String,
       localisation: String,
@@ -213,26 +195,9 @@ export default defineComponent({
         })
     },
 
-    uploadLateAttachementFile() {
-      if (this.file) {
-        let formData = new FormData();
-        formData.append('image', this.file);
-        formData.append('category', 'article');
-        formData.append('type', '');
-        formData.append('name', '');
-        this.isFileUploading = true;
-        ImageApi.uploadAttachment(formData)
-        .then((r) => {
-          let article = this.$attrs.article as Article;
-          article.item.attachement = r.data;
-          this.isFileUploading = false;
-        })
-        .catch((r) => {
-          this.isFileUploading = false;
-          alert(r);
-          console.log(r);
-        })
-      }
+    onUploadAttachementSubmited(r : TDCAttachement) {
+      let article = this.$attrs.article as Article;
+      article.item.attachement = r;
     }
   }
 })

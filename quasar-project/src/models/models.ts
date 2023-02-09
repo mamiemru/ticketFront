@@ -8,6 +8,10 @@ export interface Meta {
   totalCount: number;
 }
 
+export interface Ref<T> {
+  value: T
+}
+
 export interface TDCShop {
   id: number;
   name: string;
@@ -25,8 +29,8 @@ export interface TDCCategory {
 }
 
 export interface TDCGroup {
-  id?: number;
-  name?: string;
+  id: number;
+  name: string;
 }
 
 export interface ShopNameResponse {
