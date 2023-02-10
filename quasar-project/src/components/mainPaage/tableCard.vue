@@ -12,7 +12,7 @@
             <div v-show="expanded">
                 <q-list>
                     <q-item clickable v-for="(tablefeuillerows, j) in $attrs.datas.body" :key="j">
-                    <q-item-section v-if="tablefeuillerows.rows.length > 1">
+                    <q-item-section>
                         <q-item-label class="row justify-between">
                         <div>{{ tablefeuillerows.name }}</div>
                         <small>{{ tablefeuillerows.header.price }}€</small>
@@ -20,12 +20,6 @@
                         <q-item-label v-for="(row, k) in tablefeuillerows.rows" :key="k" caption class='row justify-between'>
                         <div>{{ row.date }}</div>
                         <div>{{ row.price }}€</div>
-                        </q-item-label>
-                    </q-item-section>
-                    <q-item-section v-else>
-                        <q-item-label class="row justify-between">
-                        <div>{{ tablefeuillerows.name }} <small>{{ tablefeuillerows.rows[0].date }}</small></div>
-                        <small>{{ tablefeuillerows.header.price }}€</small>
                         </q-item-label>
                     </q-item-section>
                     </q-item>
