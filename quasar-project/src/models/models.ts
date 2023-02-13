@@ -238,3 +238,12 @@ export class ChartLines implements IChartLines {
     }
   } as ChartOptions;
 }
+
+export class AArticle implements Article {
+  quantity = 0;
+  remise = 0.0;
+  price = 0;
+  item = { group: {} as TDCGroup, category: {} as TDCCategory } as ItemArticle;
+  tdc = { shop: {} as TDCShop, category: {} as TDCCategory } as TicketDeCaisseHeader;
+  
+}

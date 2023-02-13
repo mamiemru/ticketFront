@@ -2,7 +2,7 @@
   <div class="" style="max-width: 500px">
     <div class="row justify-evenly">
       <div class="col-6">
-        <p>Salaire théorique {{ datas.tttheorique_v }}</p>
+        <p>Minima théorique {{ datas.tttheorique_v }}</p>
         <p>Total dépensé: {{ datas.ttdepense }}</p>
         <p>Dépenses non factures: {{ datas.dep }}</p>
         <p>Dépenses only factures: {{ datas.factures }}</p>

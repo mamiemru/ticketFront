@@ -1,13 +1,17 @@
 <template>
   <div class="q-pa-md" style="width: 100%">
-    <form @submit.prevent.stop="filterByContainsIdent" @reset.prevent.stop="onGoStartPage" class="row">
-      <q-input ref="input_ident_ref" v-model="input_ident" class="col-3" dense label="filtrer par identifiant (case sensitive)" 
-        :rules="[ val => val.length >= 3 || 'Please use minumum 3 characters']"
-      >
-        <template v-slot:prepend><q-icon name="search" /></template>
-      </q-input>
-      <q-btn label="chercher" dense type="submit" flat color="blue" class="col-1" />
-      <q-btn label="reset" dense type="reset" flat color="red" class="col-1" />
+    <form @submit.prevent.stop="filterByArticle" @reset.prevent.stop="onGoStartPage" class="column justify-around">
+      <div class="row justify-around">
+        <q-input v-model="article_filter.item.ident" class="col-2" dense label="filtrer par identifiant" />   
+        <q-input v-model="article_filter.item.category.name" class="col-2" dense label="filtrer par article category" /> 
+        <q-input v-model="article_filter.item.group.name" class="col-2" dense label="filtrer par article group" /> 
+        <q-input v-model="article_filter.tdc.shop.name" class="col-2" dense label="filtrer par magasin" /> 
+        <q-input v-model="article_filter.tdc.category.name" class="col-2" dense label="filtrer par type de magasin" /> 
+      </div>
+      <div class="row justify-center">
+        <q-btn label="chercher" icon="search" dense type="submit" flat color="blue" class="col-1" />
+        <q-btn label="reset" icon="cancel" dense type="reset" flat color="red" class="col-1" />
+      </div>
     </form>
     <hr>
     <div class="row justify-between">
@@ -24,10 +28,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 
 import ItemArticleApi from '../../api/itemarticleApi'
-import {ItemArticlePagination} from '../../models/models'
+import {ItemArticlePagination, AArticle} from '../../models/models'
 
 import itemarticle from './itemarticle.vue';
 
@@ -39,13 +43,7 @@ export default defineComponent({
     return {
       page: 1,
       datas: {} as ItemArticlePagination,
-      input_ident: '' as string
-    }
-  },
-  setup() {
-    const input_ident_ref = ref(null);
-    return {
-      input_ident_ref
+      article_filter: new AArticle()
     }
   },
   mounted() {
@@ -79,11 +77,9 @@ export default defineComponent({
         })
       }
     },
-    filterByContainsIdent() {
-      if (this.input_ident_ref) {
-        ItemArticleApi.postfilterItemArticle(this.input_ident)
-          .then((r) => { console.log(r.data); this.datas = r.data; this.page = 1; })
-      }
+    filterByArticle() {
+      ItemArticleApi.postfilterItemArticle(this.article_filter)
+        .then((r) => { console.log(r.data); this.datas = r.data; this.page = 1; });
     }
   }
 });

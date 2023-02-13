@@ -1,6 +1,6 @@
 
 import { AxiosResponse } from 'axios';
-import { ItemArticlePagination } from '../models/models';
+import { Article, ItemArticlePagination } from '../models/models';
 import { ItemArticle } from '../models/models';
 import axiosConfig from '../api/axiosConfig';
 
@@ -40,10 +40,10 @@ class ItemArticleApi {
         )
     }
 
-    static postfilterItemArticle(ident: string): Promise<AxiosResponse<ItemArticlePagination>> {
+    static postfilterItemArticle(article: Article): Promise<AxiosResponse<ItemArticlePagination>> {
         return axiosConfig.post<ItemArticlePagination>(
             '/ticket_de_caisse/article/item/filter/',
-            { ident },
+            article,
             {
                 headers: {
                     Accept: 'application/json'
