@@ -3,7 +3,7 @@ import { AxiosResponse } from 'axios';
 import { FeuilleIds } from '../models/models';
 import { TableFeuilleResponse } from '../models/models';
 import { TableFeuilleSummary } from '../models/models';
-import { PlotLineMonthResponse } from '../models/models';
+import { ChartLines } from '../models/models';
 import axiosConfig from '../api/axiosConfig';
 
 class FeuilleApi {
@@ -30,8 +30,8 @@ class FeuilleApi {
         );
     }
 
-    static getGraphOfTheMonth(feuille_id: number): Promise<AxiosResponse<PlotLineMonthResponse>> {
-        return axiosConfig.get<PlotLineMonthResponse>(
+    static getGraphOfTheMonth(feuille_id: number): Promise<AxiosResponse<ChartLines>> {
+        return axiosConfig.get<ChartLines>(
             `/feuille/monthly/${feuille_id}/plot/`,
             {
                 headers: {
@@ -39,7 +39,18 @@ class FeuilleApi {
                 },
             },
         );
-    }    
+    }
+
+    static getGraphOfTheMonthShop(feuille_id: number): Promise<AxiosResponse<ChartLines>> {
+        return axiosConfig.get<ChartLines>(
+            `feuille/monthly/${feuille_id}/plot/shop/`,
+            {
+                headers: {
+                    Accept: 'application/json'
+                },
+            },
+        );
+    }
     
     static getYearMonth(): Promise<AxiosResponse<FeuilleIds[]>> {
         return axiosConfig.get<FeuilleIds[]>(

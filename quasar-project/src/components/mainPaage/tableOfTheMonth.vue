@@ -1,12 +1,20 @@
 <template>
-  <div class="q-pa-md row items-start q-gutter-md justify-center">
-    <table-card v-for="(tablefeuillebody, i) in datas" :key="i" class="my-card flat bordered" style="width: 280px;" :datas="tablefeuillebody" />
+  <div class="row justify-center">
+    <div class="col-4 q-gutter-md column items-start">
+      <table-card v-for="(tablefeuillebody, i) in datas_col1" :key="i" class="my-card flat bordered" style="width: 290px;" :datas="tablefeuillebody" />
+    </div>    
+    <div class="col-4 q-gutter-md column items-start">
+      <table-card v-for="(tablefeuillebody, i) in datas_col2" :key="i" class="my-card flat bordered" style="width: 290px;" :datas="tablefeuillebody" />
+    </div>    
+    <div class="col-4 q-gutter-md column items-start">
+      <table-card v-for="(tablefeuillebody, i) in datas_col3" :key="i" class="my-card flat bordered" style="width: 290px;" :datas="tablefeuillebody" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { TableFeuilleResponse } from '../../models/models';
+import { TableFeuilleCategory } from '../../models/models';
 
 import tableCard from './tableCard.vue';
 
@@ -20,7 +28,9 @@ export default defineComponent({
   },
   data() {
     return {
-      datas: {} as TableFeuilleResponse
+      datas_col1: [] as TableFeuilleCategory[],
+      datas_col2: [] as TableFeuilleCategory[],
+      datas_col3: [] as TableFeuilleCategory[]
     }
   },
   mounted() {
@@ -36,8 +46,11 @@ export default defineComponent({
       if (this.feuille_id) {
         FeuilleApi.getTableOfTheMonth(this.feuille_id)
         .then((r) => {
-            console.log(r); 
-            this.datas = r.data;
+          let elements = Object.values(r.data) as TableFeuilleCategory[];
+          let size_col = Math.ceil(elements.length / 3);
+          this.datas_col1 = elements.splice(0, size_col);
+          this.datas_col2 = elements.splice(0, size_col);
+          this.datas_col3 = elements as TableFeuilleCategory[];
         })
         .catch((r) => {
             console.log(r);

@@ -1,17 +1,27 @@
 <template>
   <div class="" style="max-width: 500px">
-    <div class="row justify-evenly">
-      <div class="col-6">
-        <p>Minima théorique {{ datas.tttheorique_v }}</p>
-        <p>Total dépensé: {{ datas.ttdepense }}</p>
-        <p>Dépenses non factures: {{ datas.dep }}</p>
-        <p>Dépenses only factures: {{ datas.factures }}</p>
+    <div class="column items-between">
+      <div class="row">
+        <div class="col-6">
+          <small>Minima théorique {{ datas.tttheorique_v }}</small>
+        </div>
+        <div class="col-6 column">
+          <small>Total dépensé: {{ datas.ttdepense }}</small>
+          <small>Epargne théorique {{ datas.tteparge }}</small>
+        </div>
       </div>
-      <div class="col-6">
-        <p>Epargne théorique {{ datas.tteparge }}</p>
-        <p>Dépenses de vie: {{ datas.ttevitable }}</p>
-        <p>Dépenses de conforts: {{ datas.ttconfort }}</p>
-        <p>Dépenses moyen journalier: {{ datas.mj }}</p>
+      <div class="row">
+        <small class="col-6" >Dépenses non factures: {{ datas.dep }}</small>
+        <small class="col-6" >Dépenses only factures: {{ datas.factures }}</small>
+      </div>
+      <div class="row">
+        <div class="column col-6">
+          <small class="col" >Dépenses de vie: {{ datas.ttevitable }}</small>
+          <small class="col" >Dépenses moyen journalier: {{ datas.mj }}</small>
+        </div>
+        <div class="column col-6">
+          <small class="col" >Dépenses de conforts: {{ datas.ttconfort }}</small>
+        </div>
       </div>
     </div>
   </div>

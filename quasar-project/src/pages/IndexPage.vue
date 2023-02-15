@@ -1,10 +1,10 @@
 <template>
   <q-page class="row items-start justify-between" style="max-height: 100%">
     <ticket-de-caisse-list-summary class="col-2" />
-    <div class="col-7">
-      <div class="q-pa-md q-gutter-sm row justify-between">
+    <div class="col-7 justify-center">
+      <div class="q-pa-md q-gutter-sm row justify-between items-center">
         <q-btn @click="pmonth" align="left" class="btn-fixed-width" color="primary" label="Mois précédant"></q-btn>
-        <p>{{ feuille_date }}</p>
+        <small caption>{{ feuille_date }}</small>
         <q-btn @click="nmonth" align="right" class="btn-fixed-width" color="primary" label="Mois suivant"></q-btn>
       </div>
       <table-of-the-month :feuille_id='feuille_id' />
