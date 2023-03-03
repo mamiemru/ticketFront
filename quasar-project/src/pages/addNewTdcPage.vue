@@ -4,33 +4,33 @@
       v-model="step"
       ref="stepper"
       color="primary"
-      animated
+      animated flat
       :key="updateStepper"
     >
       <q-step
         :name="1"
         title="Type de document"
-        icon="settings"
+        icon="label"
         :done="step > 1"
       >
         <q-stepper-navigation>
           <div class="column">
-            <div class="col-4 row justify-around">
-              <h5>Choisisez le type de document</h5>
+            <div class="col-4 row justify-center items-center">
+              <h5 caption>Choisisez le type de document</h5>
             </div> 
-            <div class="col-6 row items-center justify-around">  
+            <div class="row items-center justify-around" style="height: 70%">  
               <div class="col-3 q-gutter-y-md column">
-                <q-btn color="black" class="full-width" label="Ticket de caisse" 
+                <q-btn color="black" class="full-width" label="Ticket de caisse" icon="receipt_long"
                   @click="() => { docType='tdc'; step = 2; $refs.stepper.next(); updateStepper++ }" 
                 />
               </div>
               <div class="col-3 q-gutter-y-md column">
-                <q-btn color="black" class="full-width" label="Recepiece de carte banquaire" 
+                <q-btn color="black" class="full-width" label="Recepiece de carte banquaire" icon="local_atm"
                   @click="() => { docType='recepiece'; step = 2; $refs.stepper.next(); updateStepper++ }" 
                 /> 
               </div>
               <div class="col-3 q-gutter-y-md column">
-                <q-btn color="black" class="full-width" label="Facture" 
+                <q-btn color="black" class="full-width" label="Facture" icon="request_quote"
                   @click="() => { docType='facture'; step = 2; $refs.stepper.next(); updateStepper++ }" 
                 /> 
               </div>
@@ -52,12 +52,12 @@
             </div> 
             <div class="col-6 row items-center justify-around">  
               <div class="col-4 q-gutter-y-md column">
-                <q-btn color="black" class="full-width" label="Renseignement manuel du ticket" 
+                <q-btn color="black" class="full-width" label="Renseignement manuel du ticket" icon="draw"
                   @click="() => { $refs.stepper.next(); step = 3; createEmptyTdc(); updateStepper++ }"
                 />
               </div>
               <div class="col-4 q-gutter-y-md column">
-                <q-btn color="black" class="full-width" label="Renseignement assisté par IA" 
+                <q-btn color="black" class="full-width" label="Renseignement assisté par IA" icon="smart_toy"
                   @click="() => { aiAssistance = true; step = 3; $refs.stepper.next(); updateStepper++ }" 
                 /> 
               </div>
@@ -69,13 +69,13 @@
       <q-step
         :name="3"
         title="Choix du fichier"
-        icon="settings"
+        icon="upload_file"
         :done="step > 3"
       >
         <q-stepper-navigation>
           <div class="column">
             <div class="col-4 row justify-around">
-              <h5>Importer la pièce jointe (optionel)</h5>
+              <h5>Importer la pièce jointe</h5>
             </div> 
             <div class="col-4 items-center justify-around">  
               <div class="col-2 q-gutter-y-md column">
@@ -94,10 +94,10 @@
       <q-step
         :name="4"
         title="Insertion des informations"
-        icon="settings"
+        icon="edit_note"
         :done="step > 4"
       >
-        <q-stepper-navigation>
+        <q-stepper-navigation class="column justify-center items-center">
           <q-inner-loading
             :showing="isFileUploading"
             label="Please wait..."

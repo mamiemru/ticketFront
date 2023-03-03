@@ -9,7 +9,7 @@
         <q-img :src="$attrs.item.attachement.image" style="max-height: 290px;" fit="scale-down" />
       </q-card-section>
       <q-card-section class="col-5" v-else-if="$attrs.item.ident">
-        <attachement-form @submited="onUploadItemAttachementSubmited" @error="null" category="article" type="" />
+        <attachement-form @submited="onUploadItemAttachementSubmited" @error="null" category="article" type="" :name="$attrs.item.ident" />
       </q-card-section>
       <q-card-section class="col-5" v-else>
       </q-card-section>

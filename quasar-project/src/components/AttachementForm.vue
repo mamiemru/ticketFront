@@ -40,6 +40,11 @@ export default defineComponent({
       type: {
         type: String,
         required: true
+      },
+      name: {
+        type: String,
+        required: false,
+        default: ''
       }
   },
   data () {
@@ -55,7 +60,7 @@ export default defineComponent({
         formData.append('image', this.file);
         formData.append('category', this.category);
         formData.append('type', this.type);
-        formData.append('name', '');
+        formData.append('name', this.name);
         this.isFileUploading = true;
         ImageApi.uploadAttachment(formData)
         .then((r) => {
