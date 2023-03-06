@@ -118,7 +118,7 @@ import { defineComponent } from 'vue'
 
 import TicketDeCaisseCrud from '../components/ticketdecaissecrud/ticketdecaisseCrud.vue';
 
-import { Article, TDCAttachement, TDCCategory, TDCLocalisation, TDCShop } from '../models/models';
+import { Article, TDCAttachement, TDCCategory, TDCShop } from '../models/models';
 import { TicketDeCaisse } from '../models/models';
 import MLApi from '../api/mlApi';
 
@@ -169,7 +169,7 @@ export default defineComponent({
       this.isFileUploading = false;
       this.step = 4;
       this.tdc = {
-        shop: {} as TDCShop, localisation: {} as TDCLocalisation, category: {} as TDCCategory, attachement: {} as TDCAttachement,
+        shop: {} as TDCShop, category: {} as TDCCategory, attachement: {} as TDCAttachement,
         articles: [] as Article[]
       } as TicketDeCaisse;
       this.editTdc = true;

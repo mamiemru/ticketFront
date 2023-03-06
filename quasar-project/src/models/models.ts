@@ -14,12 +14,10 @@ export interface Ref<T> {
 
 export interface TDCShop {
   id: number;
+  ident: string;
   name: string;
-}
-
-export interface TDCLocalisation {
-  id: number;
-  name: string;
+  city: string;
+  localisation: string;
 }
 
 export interface TDCCategory {
@@ -62,7 +60,6 @@ export interface OnChangedArticleIdentResponse {
 export interface TicketDeCaisseHeaderResponse {
   id: number;
   shop: TDCShop;
-  localisation: TDCLocalisation;
   date: string;
   category: TDCCategory;
   total?: number;
@@ -134,7 +131,6 @@ export interface ItemArticle {
 export interface TicketDeCaisseHeader {
   id: string;
   shop: TDCShop;
-  localisation: TDCLocalisation;
   date: string;
   category: TDCCategory;
 }
@@ -150,7 +146,6 @@ export interface Article {
 export interface TicketDeCaisse {
   id: string;
   shop: TDCShop;
-  localisation: TDCLocalisation;
   date: string;
   category: TDCCategory;
   articles: Article[];

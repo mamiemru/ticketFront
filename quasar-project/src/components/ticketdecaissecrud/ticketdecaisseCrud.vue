@@ -21,11 +21,9 @@
                 >
                     <template v-slot:prepend><q-icon name="store" /></template>
                 </q-select>
-                <q-select label="Localisation" dense class="col-5" @input-value="onChangedLocalisation" :key="tdcKey"
+                <q-select label="Localisation" dense class="col-5" :key="tdcKey"
                     :options="filteredLocalisationNameOptions" 
-                    :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
-                    :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : ''"
-                    :model-value="tdc.localisation" use-input fill-input input-debounce="0" hide-selected @filter="filterLocalisations"
+                    :model-value="tdc.shop.localisation" use-input fill-input input-debounce="0" hide-selected @filter="filterLocalisations"
                 >
                     <template v-slot:prepend><q-icon name="gps_fixed" /></template>
                 </q-select>
@@ -42,7 +40,7 @@
               </div>
               <div class="row items-start justify-around" v-else>
                 <q-input v-model="tdc.shop.name" label="Shop" :dense="true" disable class="col-5" />
-                <q-input v-model="tdc.localisation.name" label="Localisation" :dense="true" disable class="col-5" />
+                <q-input v-model="tdc.shop.localisation" label="Localisation" :dense="true" disable class="col-5" />
                 <q-input v-model="tdc.date" label="Date" :dense="true" disable class="col-5" />
                 <q-input v-model="tdc.category.name" label="Catégorie" :dense="true" disable class="col-5" />
               </div>
@@ -62,7 +60,7 @@
             <article-crud class="col-6" v-for="(article, i) in tdc.articles" :key="i" 
                 :canCreate="false" :canEdit="$attrs.canEdit" :canDelete="true"
                 :index="i" @onDeleteItem="onDeleteItem" @onEditItem="onEditItem"
-                :shop="tdc.shop.name" :localisation="tdc.localisation.name" :categorie="tdc.category.name"
+                :shop="tdc.shop.name" :localisation="tdc.shop.localisation" :categorie="tdc.category.name"
                 :article="article"
             />
           </div>
@@ -81,7 +79,7 @@
 import { defineComponent } from 'vue'
 import { useQuasar } from 'quasar'
 
-import { TDCAttachement, TDCCategory, TDCGroup, TDCLocalisation, TDCShop } from '../../models/models';
+import { TDCAttachement, TDCCategory, TDCGroup, TDCShop } from '../../models/models';
 import { TicketDeCaisse, Article, ItemArticle } from '../../models/models';
 import { OnChangedShopNameResponse } from '../../models/models'
 
@@ -89,7 +87,6 @@ import TDCShopApi from '../../api/tdcshopsApi'
 import CompletionApi from '../../api/completionApi'
 import TDCCategoryApi from '../../api/tdcCategoryApi'
 import TicketdecaisseApi from '../../api/ticketdecaisseApi'
-import TDCLocalisationApi from '../../api/tdcLocalisationApi'
 
 import AttachementForm from '../AttachementForm.vue'
 import ArticleCrud from './articleCrud.vue'
@@ -108,10 +105,10 @@ export default defineComponent({
       tdcId: '' as string,
       shopNameOptions: [] as TDCShop[],
       categoriesNameOptions: [] as TDCCategory[],
-      localisationsNameOptions: [] as TDCLocalisation[],
+      localisationsNameOptions: [] as string[],
       filteredShopNameOptions: [] as TDCShop[],
       filteredCategoriesNameOptions: [] as TDCCategory[],
-      filteredLocalisationNameOptions: [] as TDCLocalisation[],
+      filteredLocalisationNameOptions: [] as string[],
       informationsOptions: {} as OnChangedShopNameResponse
     }
   },
@@ -120,9 +117,6 @@ export default defineComponent({
     let tdc = context.attrs.tdc as TicketDeCaisse;
     if (tdc.shop === null) {
       tdc.shop = {} as TDCShop;
-    }
-    if (tdc.localisation === null) {
-      tdc.localisation = {} as TDCLocalisation;
     }
     if (tdc.category === null) {
       tdc.category = {} as TDCCategory;
@@ -152,10 +146,6 @@ export default defineComponent({
       this.categoriesNameOptions = r.data;
       this.filteredCategoriesNameOptions = this.categoriesNameOptions as TDCCategory[];
     });
-    TDCLocalisationApi.getLocalisations().then((r) => {
-      this.localisationsNameOptions = r.data;
-      this.filteredLocalisationNameOptions = this.localisationsNameOptions as TDCLocalisation[];
-    })
   },
   methods: {
     updateTotal() {
@@ -212,32 +202,21 @@ export default defineComponent({
       }
       this.tdc.shop.name = shopName;
       if (this.tdc.shop && this.tdc.shop.name && this.tdc.shop.name.length > 2 && this.filteredShopNameOptions.length > 0) {
-        this.tdc.localisation.name = '';
         this.tdc.category.name = '';
         CompletionApi.getCompletionOnChangedShopName(this.tdc.shop.name)
         .then((r) => {
           this.informationsOptions = r.data;
-
-          // let cetegoriesNeedle = this.informationsOptions.tdc_category.map(v => v.toLowerCase());
-          // let localisationNeedle = this.informationsOptions.tdc_localisation.map(v => v.toLowerCase());
-
-          // this.filteredCategoriesNameOptions = this.categoriesNameOptions.filter(v => v.name.toLocaleLowerCase() in cetegoriesNeedle);
-          // this.filteredLocalisationNameOptions = this.localisationsNameOptions.filter(v => v.name.toLocaleLowerCase() in localisationNeedle);
-
           this.onChangedCategorie(this.informationsOptions.item_category[0]);
-          this.onChangedLocalisation(this.informationsOptions.tdc_localisation[0]);
+
+          if (this.informationsOptions.tdc_localisation)
+            this.tdc.shop.localisation = this.informationsOptions.tdc_localisation[0];
+          
           this.tdcKey += 1;
         })
         .catch((r) => {
           console.log(r);
         })
       }
-    },
-    onChangedLocalisation(localisation : string) {
-      if (this.tdc.localisation === null) {
-        this.tdc.localisation = {} as TDCLocalisation;
-      }
-      this.tdc.localisation.name = localisation;
     },
     onChangedCategorie(categorieName : string) {
       if (this.tdc.category === null) {
@@ -256,11 +235,11 @@ export default defineComponent({
     filterLocalisations (val : string, update : any) {
       update(() => {
         const needle = val.toLocaleLowerCase()
-        this.filteredLocalisationNameOptions = this.localisationsNameOptions.filter(v => v.name.toLocaleLowerCase().indexOf(needle) > -1)
+        this.filteredLocalisationNameOptions = this.localisationsNameOptions.filter(v => v.toLocaleLowerCase().indexOf(needle) > -1)
       })
     },
     isTdcFIlledIn() {
-      return this.tdc.shop && this.tdc.localisation && this.tdc.date && this.tdc.category && this.tdc.articles && this.tdc.articles.length > 0;
+      return this.tdc.shop && this.tdc.shop.localisation && this.tdc.date && this.tdc.category && this.tdc.articles && this.tdc.articles.length > 0;
     },
     leaveTicketDeCaisse() {
       this.$router.push({ path: '/' });

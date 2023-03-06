@@ -3,7 +3,7 @@
     <article-crud style="width: 700px; max-width: 80vw;"
         :canCreate="true" :canEdit="false" :canDelete="false"
         :index="-1" @onDeleteItem="null" @onEditItem="null" @onOk="onOKClick" @onCancel="onCancelClick"
-        :shop="tdc.shop.name" :localisation="tdc.localisation.name" :categorie="tdc.category.name" 
+        :shop="tdc.shop.name" :localisation="tdc.shop.localisation" :categorie="tdc.category.name" 
         :article="article"
     />
   </q-dialog>

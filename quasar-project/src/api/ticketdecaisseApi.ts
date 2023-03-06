@@ -54,7 +54,7 @@ class TicketdecaisseApi {
     static putTicketDeCaisse(tdc : TicketDeCaisse, tdcId : string): Promise<AxiosResponse<TicketDeCaisse>> {
         return axiosConfig.post<TicketDeCaisse>(
             `TicketDeCaisse/tdc/${tdcId}`,
-            { shop: tdc.shop, localisation: tdc.localisation, date: tdc.date, categorie: tdc.category, articles: tdc.articles },
+            { shop: tdc.shop, date: tdc.date, categorie: tdc.category, articles: tdc.articles },
             {
                 headers: {
                     Accept: 'application/json'

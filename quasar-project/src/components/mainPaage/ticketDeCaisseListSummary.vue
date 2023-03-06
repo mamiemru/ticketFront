@@ -4,7 +4,7 @@
         <q-item @click="goToTdc(ticket)" clickable v-ripple v-for="ticket in ticketDeCaisses" :key="ticket.id">
             <q-item-section >
                 <q-item-label class="row justify-between">
-                  <small>{{ ticket.shop.name }} - {{ ticket.localisation.name }}</small>
+                  <small>{{ ticket.shop.name }} - {{ ticket.shop.localisation }}</small>
                   <small>{{ ticket.total }}€</small>
                 </q-item-label>
                 <q-item-label caption class="row justify-between">
