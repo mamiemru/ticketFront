@@ -12,8 +12,20 @@ class TDCShopApi {
                 headers: {
                     Accept: 'application/json'
                 },
-            },
+            }
         );
+    }
+
+    static putShop(id: number, shop: TDCShop): Promise<AxiosResponse<TDCShop>> {
+        return axiosConfig.put<TDCShop>(
+            `ticket_de_caisse/shop/${id}/`,
+            shop,
+            {
+                headers: {
+                    'Content-type': 'application/json;charset=utf8'
+                },
+            }
+        )
     }
 
 }

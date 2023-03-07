@@ -12,8 +12,8 @@
         <div class="col-7 column justify-between">
           <div class="row">
             <div class="col-10">
-              <div class="row items-start justify-around" v-if="$attrs.canEdit">
-                <q-select label="Shop" dense class="col-5" @input-value="onChangedShop" 
+              <div class="row items-start justify-around">
+                <q-select label="Shop" dense class="col-6" @input-value="onChangedShop" :disable="!$attrs.canEdit"
                   :options="filteredShopNameOptions"
                   :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
                   :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : ''"
@@ -21,16 +21,21 @@
                 >
                     <template v-slot:prepend><q-icon name="store" /></template>
                 </q-select>
-                <q-select label="Localisation" dense class="col-5" :key="tdcKey"
-                    :options="filteredLocalisationNameOptions" 
-                    :model-value="tdc.shop.localisation" use-input fill-input input-debounce="0" hide-selected @filter="filterLocalisations"
-                >
-                    <template v-slot:prepend><q-icon name="gps_fixed" /></template>
-                </q-select>
-                <q-date-time-picker :tdc="tdc" class="col-5"
+                <q-date-time-picker :tdc="tdc" class="col-5" :canEdit="$attrs.canEdit"
                 />
+                <div class="row">
+                  <q-input label="Adresse" dense class="col-7" :key="tdcKey" :disable="!$attrs.canEdit"
+                    v-model="tdc.shop.localisation" @change="removeTdcShopId"
+                  >
+                      <template v-slot:prepend><q-icon name="gps_fixed" /></template>
+                  </q-input>
+                  <q-input label="Ville" dense class="col-5" :key="tdcKey" :disable="!$attrs.canEdit"
+                    v-model="tdc.shop.city" @change="removeTdcShopId"
+                  >
+                  </q-input>
+                </div>
                 <q-select label="Catégorie" dense class="col-5" @input-value="onChangedCategorie" :key="tdcKey"
-                  :options="filteredCategoriesNameOptions" 
+                  :options="filteredCategoriesNameOptions"  :disable="!$attrs.canEdit"
                   :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
                   :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : ''"
                   :model-value="tdc.category" use-input fill-input input-debounce="0" hide-selected
@@ -38,15 +43,12 @@
                     <template v-slot:prepend><q-icon name="category" /></template>
                 </q-select>
               </div>
-              <div class="row items-start justify-around" v-else>
-                <q-input v-model="tdc.shop.name" label="Shop" :dense="true" disable class="col-5" />
-                <q-input v-model="tdc.shop.localisation" label="Localisation" :dense="true" disable class="col-5" />
-                <q-input v-model="tdc.date" label="Date" :dense="true" disable class="col-5" />
-                <q-input v-model="tdc.category.name" label="Catégorie" :dense="true" disable class="col-5" />
-              </div>
             </div>
             <div class="col-2">
-              <q-input v-model="tdc.total" label="Total" :dense="true" disable class="col-5" />
+              <q-input v-model="tdc.total" label="Total" :dense="true" disable class="col-5"
+              >
+                <template v-slot:prepend><q-icon name="euro_symbol" /></template>
+              </q-input>
             </div>
           </div>
 
@@ -148,6 +150,9 @@ export default defineComponent({
     });
   },
   methods: {
+    removeTdcShopId() {
+      this.tdc.shop.id = undefined;
+    },
     updateTotal() {
       let total = 0;
       this.tdc.articles.forEach((article) => total += ((article.price * article.quantity) - article.remise));
@@ -207,14 +212,12 @@ export default defineComponent({
         .then((r) => {
           this.informationsOptions = r.data;
           this.onChangedCategorie(this.informationsOptions.item_category[0]);
-
-          if (this.informationsOptions.tdc_localisation)
-            this.tdc.shop.localisation = this.informationsOptions.tdc_localisation[0];
-          
+          this.tdc.shop = Object.assign(this.tdc.shop, r.data.tdc);
           this.tdcKey += 1;
         })
         .catch((r) => {
           console.log(r);
+          this.tdc.shop = { id: undefined, name: shopName, ident: '', city: '', localisation: '' } as TDCShop;
         })
       }
     },

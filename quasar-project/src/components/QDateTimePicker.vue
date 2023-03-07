@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <q-input v-model="$attrs.tdc.date" dense>
+    <q-input v-model="$attrs.tdc.date" dense :disable="!$attrs.canEdit">
       <template v-slot:prepend>
         <q-icon name="event" class="cursor-pointer">
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">

@@ -13,7 +13,7 @@ export interface Ref<T> {
 }
 
 export interface TDCShop {
-  id: number;
+  id: number | undefined;
   ident: string;
   name: string;
   city: string;
@@ -37,7 +37,7 @@ export interface ShopNameResponse {
 }
 
 export interface OnChangedShopNameResponse {
-  tdc_localisation: string[];
+  tdc: TDCShop
   tdc_category: string[];
   item_ident: string[];
   item_category: string[];
