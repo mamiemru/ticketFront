@@ -75,6 +75,12 @@ const linksList = [
     link: '/#/shops'
   },  
   {
+    title: 'Categories',
+    caption: 'quasar.dev',
+    icon: 'format_list_bulleted',
+    link: '/#/categories'
+  },  
+  {
     title: 'Docs',
     caption: 'quasar.dev',
     icon: 'school',

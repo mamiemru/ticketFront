@@ -28,6 +28,29 @@ class TDCShopApi {
         )
     }
 
+    static postShop(shop: TDCShop): Promise<AxiosResponse<TDCShop>> {
+        return axiosConfig.post<TDCShop>(
+            'ticket_de_caisse/shop/',
+            shop,
+            {
+                headers: {
+                    'Content-type': 'application/json;charset=utf8'
+                },
+            }
+        )
+    }
+
+    static deleteShop(id: number): Promise<AxiosResponse<TDCShop>> {
+        return axiosConfig.delete<TDCShop>(
+            `ticket_de_caisse/shop/${id}/`,
+            {
+                headers: {
+                    'Content-type': 'application/json;charset=utf8'
+                },
+            }
+        )
+    }
+
 }
 
 export default TDCShopApi;

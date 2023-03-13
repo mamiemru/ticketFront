@@ -155,7 +155,9 @@ export default defineComponent({
     },
     updateTotal() {
       let total = 0;
-      this.tdc.articles.forEach((article) => total += ((article.price * article.quantity) - article.remise));
+      for (let article of this.tdc.articles) {
+        total += ((article.price * article.quantity) - article.remise)
+      }
       this.tdc.total = total;
     },
     addNewArticle() {

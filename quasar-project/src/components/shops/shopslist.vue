@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md" style="width: 100%">
+    {{ selected }}
     <q-table
       flat dense
       title="Enseignes"
@@ -8,9 +9,14 @@
       row-key="id"
       selection="single"
       :selected="selected"
-      @selection="onSelection"
+      :pagination="pagination"
+      @selection="handleSelection"
     >
-      <template v-slot:top-right>
+      <template v-slot:top>
+        <q-btn color="green" outline flat label="Add shop" @click="addShop" icon="add" />
+        <q-btn color="blue" outline flat label="Edit selection" @click="editShop" icon="draw" />
+        <q-btn color="red" outline flat label="Delete selection" @click="deleteShop" icon="delete" />
+        <q-space />
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
             <q-icon name="search" />
@@ -40,7 +46,11 @@ export default defineComponent({
         { name: 'Name', label: 'name', field: 'name', sortable: true, align: 'left' },
         { name: 'City', label: 'city', field: 'city', sortable: true, align: 'left' },
         { name: 'Localisation', label: 'localisation', field: 'localisation', sortable: true, align: 'left' }
-      ], q
+      ],
+      pagination: {
+        rowsPerPage: 20
+      },
+      q
     }
   },
   data() {
@@ -54,10 +64,20 @@ export default defineComponent({
     TDCShopApi.getShops().then((r) => { this.datas = r.data; });
   },
   methods: {
-    // eslint-disable-next-line
-    onSelection ( { rows }: any ) {
-      if (rows.length === 0) {
-        return
+    //eslint-disable-next-line
+    handleSelection({ rows }: any) {
+      this.selected = rows;
+    },
+    editShop () {
+      let rows = this.selected as TDCShop[];
+      if ( rows.length != 1) {
+        this.q.notify({
+          color: 'red-5',
+          textColor: 'white',
+          icon: 'warning',
+          message: 'Select one field'
+        })
+        return;
       }
       let row = {} as TDCShop;
       row = Object.assign(row, rows[0]);
@@ -68,7 +88,63 @@ export default defineComponent({
       }).onOk((r) => {
         if (row.id) {
           TDCShopApi.putShop(row.id, r)
-          .then((r) => Object.assign(rows[0], r.data))
+          .then((r) => {
+            let datas = this.datas as TDCShop[];
+            let shopIndex = datas.findIndex((shop) => shop.id === r.data.id);
+            if (-1 < shopIndex) {
+              datas[shopIndex] = Object.assign(datas[shopIndex], r.data);
+            }
+          }
+          )
+        }
+      }).onCancel(() => {
+        console.log('Cancel')
+      })
+    },
+    addShop() {
+      this.selected = [{} as TDCShop] as TDCShop[];
+      this.q.dialog({
+        component: ShopDialogVue,
+        componentProps: { shopReadOnly: this.selected[0] }
+      }).onOk((r) => {
+          TDCShopApi.postShop(r)
+          .then((r) => {
+            let datas = this.datas as TDCShopApi[];
+            datas.unshift(r.data);
+            this.selected = [] as TDCShop[];
+          })
+      }).onCancel(() => {
+        console.log('Cancel')
+        this.selected = [] as TDCShop[];
+      })
+    },
+    deleteShop() {
+      let rows = this.selected as TDCShop[];
+      if ( rows.length != 1) {
+        this.q.notify({
+          color: 'red-5',
+          textColor: 'white',
+          icon: 'warning',
+          message: 'Select one field'
+        })
+        return;
+      }
+      let row = {} as TDCShop;
+      row = Object.assign(row, rows[0]);
+
+      this.q.dialog({
+        title: 'Confirm',
+        message: `Would you like to delete ${row.name}?`,
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        if (row.id) {
+          TDCShopApi.deleteShop(row.id)
+          .then(() => {
+            let datas = this.datas as TDCShop[];
+            this.datas = datas.filter((shop) => shop.id !== row.id);
+          }
+          )
         }
       }).onCancel(() => {
         console.log('Cancel')

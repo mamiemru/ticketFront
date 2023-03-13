@@ -24,6 +24,7 @@ export interface TDCCategory {
   id: number;
   name: string;
   required: boolean;
+  description: string;
 }
 
 export interface TDCGroup {
