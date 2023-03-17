@@ -1,6 +1,7 @@
 <template>
   <div class="" style="max-width: 300px">
-    <q-list dense bordered separator padding class="rounded-borders">
+    <q-circular-progress v-if="is_loading" indeterminate rounded size="50px" color="blue" class="q-ma-md flex flex-center" />
+    <q-list v-else dense bordered separator padding class="rounded-borders">
         <q-item @click="goToTdc(ticket)" clickable v-ripple v-for="ticket in ticketDeCaisses" :key="ticket.id">
             <q-item-section >
                 <q-item-label class="row justify-between">
@@ -28,14 +29,15 @@ export default defineComponent({
   props: {},
   data() {
     return {
+      is_loading: true,
       ticketDeCaisses: [] as TicketDeCaisseHeaderResponse[]
     }
   },
   mounted() {
       TicketdecaisseService.getTicketDeCaisseList(21)
       .then((r) => {
-          console.log(r);
           this.ticketDeCaisses = r.data;
+          this.is_loading = false;
       })
       .catch((r) => {
           console.log(r);

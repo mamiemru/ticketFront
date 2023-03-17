@@ -8,11 +8,7 @@ class TDCCategoryApi {
     static getCategories(): Promise<AxiosResponse<TDCCategory[]>> {
         return axiosConfig.get<TDCCategory[]>(
             'ticket_de_caisse/category/',
-            {
-                headers: {
-                    Accept: 'application/json'
-                },
-            },
+            
         );
     }
 
@@ -20,11 +16,6 @@ class TDCCategoryApi {
         return axiosConfig.put<TDCCategory>(
             `ticket_de_caisse/category/${id}/`,
             category,
-            {
-                headers: {
-                    'Content-type': 'application/json;charset=utf8'
-                },
-            }
         )
     }
 
@@ -32,22 +23,12 @@ class TDCCategoryApi {
         return axiosConfig.post<TDCCategory>(
             'ticket_de_caisse/category/',
             category,
-            {
-                headers: {
-                    'Content-type': 'application/json'
-                },
-            }
         )
     }
 
     static delete(id: number): Promise<AxiosResponse<TDCCategory>> {
         return axiosConfig.delete<TDCCategory>(
             `ticket_de_caisse/category/${id}/`,
-            {
-                headers: {
-                    'Content-type': 'application/json;charset=utf8'
-                },
-            }
         )
     }
 }

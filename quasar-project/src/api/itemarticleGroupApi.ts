@@ -8,11 +8,7 @@ class ItemArticleGroupApi {
     static getGroups(): Promise<AxiosResponse<TDCGroup[]>> {
         return axiosConfig.get<TDCGroup[]>(
             'ticket_de_caisse/article/item/group/',
-            {
-                headers: {
-                    Accept: 'application/json'
-                },
-            },
+            
         );
     }
 

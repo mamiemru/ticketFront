@@ -8,11 +8,7 @@ class TDCLocalisationApi {
         /*
         return axiosConfig.get<string[]>(
             'ticket_de_caisse/localisation/',
-            {
-                headers: {
-                    Accept: 'application/json'
-                },
-            },
+            
         );*/
     }
 

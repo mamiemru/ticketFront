@@ -1,6 +1,7 @@
 <template>
   <div class="" style="max-width: 500px">
-    <div class="column items-between">
+    <q-circular-progress v-if="is_loading" indeterminate rounded size="50px" color="blue" class="q-ma-md" />
+    <div class="column items-between" v-else>
       <div class="row">
         <div class="col-6">
           <small>Minima théorique {{ datas.tttheorique_v }}</small>
@@ -40,6 +41,7 @@ export default defineComponent({
   },
   data() {
     return {
+        is_loading: true,
         datas: {} as TableFeuilleSummary
     }
   },
@@ -56,8 +58,8 @@ export default defineComponent({
       if (this.feuille_id) {
         FeuilleService.getSummaryOfTheMonth(this.feuille_id)
         .then((r) => {
-            console.log(r); 
             this.datas = r.data;
+            this.is_loading = false;
         })
         .catch((r) => {
             console.log(r);

@@ -1,5 +1,6 @@
 <template>
   <q-page class="row items-start justify-between" style="max-height: 100%">
+
     <ticket-de-caisse-list-summary class="col-2" />
     <div class="col-7 justify-center">
       <div class="q-pa-md q-gutter-sm row justify-between items-center">

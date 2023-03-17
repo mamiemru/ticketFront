@@ -1,5 +1,6 @@
 <template>
   <div class="row justify-center">
+    <q-circular-progress v-if="is_loading" indeterminate rounded size="50px" color="blue" class="q-ma-md" />
     <div class="col-4 q-gutter-md column items-start">
       <table-card v-for="(tablefeuillebody, i) in datas_col1" :key="i" class="my-card flat bordered" style="width: 290px;" :datas="tablefeuillebody" />
     </div>    
@@ -28,6 +29,7 @@ export default defineComponent({
   },
   data() {
     return {
+      is_loading: true,
       datas_col1: [] as TableFeuilleCategory[],
       datas_col2: [] as TableFeuilleCategory[],
       datas_col3: [] as TableFeuilleCategory[]
@@ -51,6 +53,7 @@ export default defineComponent({
           this.datas_col1 = elements.splice(0, size_col);
           this.datas_col2 = elements.splice(0, size_col);
           this.datas_col3 = elements as TableFeuilleCategory[];
+          this.is_loading = false;
         })
         .catch((r) => {
             console.log(r);

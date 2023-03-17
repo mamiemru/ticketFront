@@ -10,33 +10,21 @@ class CompletionApi {
     static getCompletionShopName(): Promise<AxiosResponse<ShopNameResponse>> {
         return axiosConfig.post<ShopNameResponse>(
             'completion/changed/',
-            {
-                headers: {
-                    Accept: 'application/json'
-                },
-            },
+            
         );
     }
 
     static getCompletionOnChangedShopName(shop : string): Promise<AxiosResponse<OnChangedShopNameResponse>> {
         return axiosConfig.get<OnChangedShopNameResponse>(
             `completion/changed/${shop}/`,
-            {
-                headers: {
-                    Accept: 'application/json'
-                },
-            },
+            
         );
     }    
     
     static getCompletionOnChangedArticleIdent(shop : string, itemArticle: string): Promise<AxiosResponse<Article>> {
         return axiosConfig.get<Article>(
             `completion/changed/${shop}/article/item/${itemArticle}/`,
-            {
-                headers: {
-                    Accept: 'application/json'
-                },
-            },
+            
         );
     }
 }

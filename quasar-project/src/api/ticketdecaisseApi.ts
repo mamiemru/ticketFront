@@ -8,33 +8,21 @@ class TicketdecaisseApi {
     static getTicketDeCaisseList(limit: number): Promise<AxiosResponse<TicketDeCaisseHeaderResponse[]>> {
         return axiosConfig.get<TicketDeCaisseHeaderResponse[]>(
             `ticket_de_caisse/last_n/${limit}/`,
-            {
-                headers: {
-                    Accept: 'application/json'
-                },
-            },
+            
         );
     }    
     
     static getTicketDeCaisse(tdcId : string): Promise<AxiosResponse<TicketDeCaisse>> {
         return axiosConfig.get<TicketDeCaisse>(
             `ticket_de_caisse/${tdcId}/`,
-            {
-                headers: {
-                    Accept: 'application/json'
-                },
-            },
+            
         );
     }
 
     static deleteTicketDeCaisse(tdcId : string): Promise<AxiosResponse<TicketDeCaisse>> {
         return axiosConfig.delete<TicketDeCaisse>(
             `ticket_de_caisse/${tdcId}/`,
-            {
-                headers: {
-                    Accept: 'application/json'
-                },
-            },
+            
         );
     }
 
@@ -55,11 +43,7 @@ class TicketdecaisseApi {
         return axiosConfig.post<TicketDeCaisse>(
             `TicketDeCaisse/tdc/${tdcId}`,
             { shop: tdc.shop, date: tdc.date, categorie: tdc.category, articles: tdc.articles },
-            {
-                headers: {
-                    Accept: 'application/json'
-                },
-            },
+            
         );
     }
 }

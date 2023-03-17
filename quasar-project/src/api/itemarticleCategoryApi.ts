@@ -8,11 +8,7 @@ class ItemArticleCategoryApi {
     static getCategories(): Promise<AxiosResponse<TDCCategory[]>> {
         return axiosConfig.get<TDCCategory[]>(
             'ticket_de_caisse/article/item/category/',
-            {
-                headers: {
-                    Accept: 'application/json'
-                },
-            },
+            
         );
     }
 
