@@ -209,6 +209,28 @@ export interface IChartLines {
   chartOptions: ChartOptions;
 }
 
+export class ChartPie {
+  series = [] as number[];
+  chartOptions = {
+    chart: {
+      width: 380,
+      type: 'pie',
+    },
+    labels: [] as string[],
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: 200
+        },
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }]
+  }
+}
+
 export class ChartLines implements IChartLines {
   series = [] as ChartSerie[];
   chartOptions = {

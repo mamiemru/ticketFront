@@ -13,7 +13,7 @@
 
 import { defineComponent } from 'vue';
 
-import FeuilleApi from '../../api/feuilleApi';
+import FeuilleService from '../../service/FeuilleService'
 import { IChartLines } from '../../models/models'
 
 export default defineComponent({
@@ -38,10 +38,10 @@ export default defineComponent({
   methods: {
     getDatas() {
       if (this.feuille_id) {
-        FeuilleApi.getGraphOfTheMonth(this.feuille_id)
+        FeuilleService.getGraphOfTheMonth(this.feuille_id)
         .then((r) => { this.apexchart_depense = r.data; })
         .catch((r) => { console.log(r); })
-        FeuilleApi.getGraphOfTheMonthShop(this.feuille_id)
+        FeuilleService.getGraphOfTheMonthShop(this.feuille_id)
         .then((r) => { this.apexchart_shops = r.data; })
         .catch((r) => { console.log(r); })
       }

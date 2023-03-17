@@ -28,7 +28,7 @@
 
 import { defineComponent } from 'vue'
 
-import ImageApi from '../api/imagesApi';
+import ImageService from '../service/ImageService';
 
 export default defineComponent({
   name: 'AttachementForm',
@@ -62,7 +62,7 @@ export default defineComponent({
         formData.append('type', this.type);
         formData.append('name', this.name);
         this.isFileUploading = true;
-        ImageApi.uploadAttachment(formData)
+        ImageService.uploadAttachment(formData)
         .then((r) => {
           this.isFileUploading = false;
           this.$emit('submited', r.data);

@@ -31,7 +31,7 @@
 import { defineComponent } from 'vue';
 import { TableFeuilleSummary } from '../../models/models';
 
-import FeuilleApi from '../../api/feuilleApi';
+import FeuilleService from '../../service/FeuilleService';
 
 export default defineComponent({
   name: 'SummaryOfTheMonth',
@@ -54,7 +54,7 @@ export default defineComponent({
   methods: {
     getDatas() {
       if (this.feuille_id) {
-        FeuilleApi.getSummaryOfTheMonth(this.feuille_id)
+        FeuilleService.getSummaryOfTheMonth(this.feuille_id)
         .then((r) => {
             console.log(r); 
             this.datas = r.data;

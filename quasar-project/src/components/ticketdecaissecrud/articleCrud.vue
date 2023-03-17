@@ -89,7 +89,7 @@ import AttachementForm from '../AttachementForm.vue'
 
 import { Article, TDCAttachement, TDCCategory, TDCGroup } from '../../models/models';
 
-import CompletionApi from '../../api/completionApi';
+import CompletionService from '../../service/CompletionService';
 
 export default defineComponent({
   name: 'EditArticle',
@@ -114,8 +114,8 @@ export default defineComponent({
     }
   },
   mounted() {
-      if (this.shop && this.$attrs.canCreate) {
-        CompletionApi.getCompletionOnChangedShopName(this.shop)
+      if (this.$attrs.canCreate) {
+        CompletionService.getCompletionOnChangedShopName(this.shop)
         .then((r) => {
             this.identOptions = r.data.item_ident;
             this.filteredIdentOptions = r.data.item_ident;
@@ -163,8 +163,8 @@ export default defineComponent({
       if (article.item.ident != ident) {
         article.item.ident = ident;
       }
-      if (this.shop && article.item.ident && article.item.ident.length > 2) {
-          CompletionApi.getCompletionOnChangedArticleIdent(this.shop, article.item.ident)
+      if (article.item.ident && article.item.ident.length > 2) {
+          CompletionService.getCompletionOnChangedArticleIdent(this.shop, article.item.ident)
           .then((r) => { 
                 article.item.name = (r.data.item && r.data.item.name)? r.data.item.name : ident;
                 article.item.category = (r.data.item.category && r.data.item.category.name)? r.data.item.category : { name: '', id: 0, required: false} as TDCCategory;

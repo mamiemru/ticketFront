@@ -16,7 +16,7 @@ class TDCCategoryApi {
         );
     }
 
-    static putCategory(id: number, category: TDCCategory): Promise<AxiosResponse<TDCCategory>> {
+    static put(id: number, category: TDCCategory): Promise<AxiosResponse<TDCCategory>> {
         return axiosConfig.put<TDCCategory>(
             `ticket_de_caisse/category/${id}/`,
             category,
@@ -28,13 +28,24 @@ class TDCCategoryApi {
         )
     }
 
-    static postCategory(category: TDCCategory): Promise<AxiosResponse<TDCCategory>> {
+    static post(category: TDCCategory): Promise<AxiosResponse<TDCCategory>> {
         return axiosConfig.post<TDCCategory>(
             'ticket_de_caisse/category/',
             category,
             {
                 headers: {
                     'Content-type': 'application/json'
+                },
+            }
+        )
+    }
+
+    static delete(id: number): Promise<AxiosResponse<TDCCategory>> {
+        return axiosConfig.delete<TDCCategory>(
+            `ticket_de_caisse/category/${id}/`,
+            {
+                headers: {
+                    'Content-type': 'application/json;charset=utf8'
                 },
             }
         )

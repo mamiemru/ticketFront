@@ -21,7 +21,7 @@
 import { defineComponent } from 'vue';
 import { TicketDeCaisseHeaderResponse } from '../../models/models';
 
-import TicketdecaisseApi from '../../api/ticketdecaisseApi'
+import TicketdecaisseService from '../../service/TicketdecaisseService'
 
 export default defineComponent({
   name: 'TicketDeCaisseListSummary',
@@ -32,7 +32,7 @@ export default defineComponent({
     }
   },
   mounted() {
-      TicketdecaisseApi.getTicketDeCaisseList(21)
+      TicketdecaisseService.getTicketDeCaisseList(21)
       .then((r) => {
           console.log(r);
           this.ticketDeCaisses = r.data;

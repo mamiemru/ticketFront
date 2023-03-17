@@ -53,8 +53,8 @@ import { useQuasar } from 'quasar'
 import AttachementForm from '../AttachementForm.vue'
 
 import { ItemArticle, TDCAttachement, TDCCategory, TDCGroup } from '../../models/models';
-import ItemArticleCategoryApi from '../../api/itemarticleCategoryApi';
-import ItemArticleGroupApi from '../../api/itemarticleGroupApi';
+import ItemArticleCategoryService from '../../service/ItemArticleCategoryService';
+import ItemArticleGroupService from '../../service/ItemArticleGroupService';
 
 export default defineComponent({
   name: 'ItemArticleCrud',
@@ -87,9 +87,9 @@ export default defineComponent({
     if (!item.name) {
       item.name = item.ident.toUpperCase();
     }
-    ItemArticleCategoryApi.getCategories()
+    ItemArticleCategoryService.getCategories()
     .then((r) => { this.articleCategoriesOptions = r.data.map((c) => c.name); }).catch((r) => { console.log(r); })
-    ItemArticleGroupApi.getGroups()
+    ItemArticleGroupService.getGroups()
     .then((r) => { this.articleGroupOptions = r.data.map((g) => g.name); }).catch((r) => { console.log(r); })
   },
   methods: {

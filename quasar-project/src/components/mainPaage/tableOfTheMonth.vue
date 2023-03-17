@@ -18,7 +18,7 @@ import { TableFeuilleCategory } from '../../models/models';
 
 import tableCard from './tableCard.vue';
 
-import FeuilleApi from '../../api/feuilleApi';
+import FeuilleService from '../../service/FeuilleService';
 
 export default defineComponent({
   components: { tableCard },
@@ -44,7 +44,7 @@ export default defineComponent({
   methods: {
     getDatas() {
       if (this.feuille_id) {
-        FeuilleApi.getTableOfTheMonth(this.feuille_id)
+        FeuilleService.getTableOfTheMonth(this.feuille_id)
         .then((r) => {
           let elements = Object.values(r.data) as TableFeuilleCategory[];
           let size_col = Math.ceil(elements.length / 3);

@@ -27,7 +27,7 @@ import TableOfTheMonth from '../components/mainPaage/tableOfTheMonth.vue';
 
 import { FeuilleIds } from '../models/models';
 
-import FeuilleApi from '../api/feuilleApi';
+import FeuilleService from '../service/FeuilleService';
 
 export default defineComponent({
   name: 'IndexPage',
@@ -60,7 +60,7 @@ export default defineComponent({
       this.feuille_date = `${months[date.getMonth()]} ${date.getFullYear()}`;
     },
     getDatas() {
-      FeuilleApi.getYearMonth()
+      FeuilleService.getYearMonth()
       .then((r) => {
           console.log(r); 
           this.datas = r.data.reverse();

@@ -30,7 +30,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import ItemArticleApi from '../../api/itemarticleApi'
+import ItemArticleService from '../../service/ItemArticleService'
 import {ItemArticlePagination, AArticle} from '../../models/models'
 
 import itemarticle from './itemarticle.vue';
@@ -47,29 +47,29 @@ export default defineComponent({
     }
   },
   mounted() {
-    ItemArticleApi.getItemArticlePagination(null)
+    ItemArticleService.getItemArticlePagination(null)
     .then((r) => {this.datas = r.data; })
   },
   methods: {
     onGoStartPage() {
-      ItemArticleApi.getItemArticlePagination(null)
+      ItemArticleService.getItemArticlePagination(null)
         .then((r) => { this.datas = r.data; this.page = 1; })
     },
     onPreviousPage() {
       if (this.datas.previous) {
-        ItemArticleApi.getItemArticlePagination(this.datas.previous)
+        ItemArticleService.getItemArticlePagination(this.datas.previous)
         .then((r) => { this.datas = r.data; --this.page; })
       }
     },
     onNextPage() {
       if (this.datas.next) {
-        ItemArticleApi.getItemArticlePagination(this.datas.next)
+        ItemArticleService.getItemArticlePagination(this.datas.next)
         .then((r) => { this.datas = r.data; ++this.page; })
       }
     },
     onGoLastPage() {
       if (this.datas) {
-        ItemArticleApi.getItemArticlePaginationPerPage('last')
+        ItemArticleService.getItemArticlePaginationPerPage('last')
           .then((r) => {
             this.datas = r.data
             if (r.data.previous) 
@@ -78,7 +78,7 @@ export default defineComponent({
       }
     },
     filterByArticle() {
-      ItemArticleApi.postfilterItemArticle(this.article_filter)
+      ItemArticleService.postfilterItemArticle(this.article_filter)
         .then((r) => { console.log(r.data); this.datas = r.data; this.page = 1; });
     }
   }

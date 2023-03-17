@@ -28,7 +28,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useQuasar } from 'quasar'
-import ItemArticleApi from '../../api/itemarticleApi'
+import ItemArticleService from '../../service/ItemArticleService'
 import { ItemArticle } from '../../models/models'
 import itemarticleCrudDialogVue from '../ticketdecaissecrud/itemarticleCrudDialog.vue';
 
@@ -58,7 +58,7 @@ export default defineComponent({
       })
     },
     onUploadAttachementSubmited(itemArticle: ItemArticle) {
-      ItemArticleApi.putItemArticle(itemArticle)
+      ItemArticleService.putItemArticle(itemArticle)
       .then((r) => {
         this.$attrs.itemarticle = r.data;
       })

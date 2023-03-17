@@ -10,7 +10,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'articles', component: () => import('pages/ItemArticles.vue') },
       { path: 'shops', component: () => import('pages/Shops.vue') },
       { path: 'categories', component: () => import('pages/Categories.vue') },
-      { name: 'display_articles_with_ident', path: 'articles/:ident', component: () => import('pages/Showperarticle.vue') },
+      { path: 'articles/:ident', component: () => import('pages/Showperarticle.vue'), name: 'display_articles_with_ident' },
       { path: '', component: () => import('pages/IndexPage.vue') }
     ]
   },

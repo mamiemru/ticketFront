@@ -7,7 +7,7 @@ import { defineComponent } from 'vue';
 import { TicketDeCaisse } from '../models/models';
 import TicketDeCaisseCrud from '../components/ticketdecaissecrud/ticketdecaisseCrud.vue'
 
-import TicketdecaisseApi from '../api/ticketdecaisseApi'
+import TicketdecaisseService from '../service/TicketdecaisseService'
 
 export default defineComponent({
   name: 'TicketDeCaisse',
@@ -20,7 +20,7 @@ export default defineComponent({
   },  
   created() {
     let tdcId = this.$route.params.tdcId as string;
-    TicketdecaisseApi.getTicketDeCaisse(tdcId)
+    TicketdecaisseService.getTicketDeCaisse(tdcId)
       .then((r) => {
         this.tdc = r.data;
         this.tdcId = this.tdc.id;

@@ -1,14 +1,15 @@
 <template>
   <div>
-    <div class="row justify-start">
+    <div class="row justify-between">
       <article-crud v-if="selectedArticle && selectedArticle.tdc" class="col-4" 
-        :categorie="selectedArticle.tdc.category.name" :localisation="selectedArticle.tdc.localisation.name" 
+        :categorie="selectedArticle.tdc.category.name" :localisation="selectedArticle.tdc.shop.localisation" 
         :shop="selectedArticle.tdc.shop.name" 
         :canCreate="false" :canEdit="false" :canDelete="false" :article="selectedArticle" 
       />
+      <graph-pie class="col-5" :chart="shopChart" v-if="shopChartReady" />
     </div>
     <div class="row justify-around">
-      <graph-multi-lines class="col-5" :chart="shopNameChart" v-if="shopNameChartReady" />
+      <graph-multi-lines class="col-5" :chart="priceChart" v-if="priceChartReady" />
       <graph-multi-lines class="col-5" :chart="quantChart" v-if="quantChartReady" />
     </div>
     <pre>{{ datas }}</pre>
@@ -19,66 +20,68 @@
 import { defineComponent } from 'vue';
 
 import GraphMultiLines from '../components/charts/GraphMultiLines.vue'
+import GraphPie from '../components/charts/GraphPie.vue'
 
 import { Article, ChartSerie } from '../models/models'
 import { ChartLines } from '../models/models'
+import { ChartPie } from '../models/models'
 
-import ArticleApi from '../api/articleApi'
+import ArticleService from '../service/ArticleService'
 import ArticleCrud from '../components/ticketdecaissecrud/articleCrud.vue';
 
 export default defineComponent({
   name: 'showPerArticle',
-  components: { GraphMultiLines, ArticleCrud},
+  components: { GraphMultiLines, GraphPie, ArticleCrud},
   data() {
     return {
       ident: '' as string,
       datas: [] as Article[],
       selectedArticle: {} as Article,
-      shopNameChart: {} as ChartLines,
-      shopNameChartReady: false,
+      priceChart: {} as ChartLines,
+      priceChartReady: false,
       quantChart: {} as ChartLines,
-      quantChartReady: false
+      quantChartReady: false,
+      shopChart: {} as ChartPie,
+      shopChartReady: false,
     }
   },
   mounted() {
     let ident = this.$route.params.ident as string;
-    if (ident) {
-      ArticleApi.listArticleByIdent(ident)
-      .then((r) => {
-        this.datas = r.data;
-        this.selectedArticle = this.datas[this.datas.length-1];
-        this.ident = ident;
-        this.initShopNameChart();
-        this.initQuantChart();
-
-      })
-    }
+    ArticleService.listArticleByIdent(ident)
+    .then((r) => {
+      this.datas = r.data;
+      this.selectedArticle = this.datas[this.datas.length-1];
+      this.ident = ident;
+      this.initPriceChart();
+      this.initQuantChart();
+      this.initShopChart();
+    })
   },
   methods: {
-    initShopNameChart() {
-      let shopNameChart = new ChartLines();
-      shopNameChart.chartOptions.title.text = 'Prix de l\'article par magasin et date';
-      shopNameChart.chartOptions.xaxis.title.text = 'Date';
-      shopNameChart.chartOptions.yaxis.title.text = 'Prix';
+    initPriceChart() {
+      let priceChart = new ChartLines();
+      priceChart.chartOptions.title.text = 'Prix de l\'article par magasin et date';
+      priceChart.chartOptions.xaxis.title.text = 'Date';
+      priceChart.chartOptions.yaxis.title.text = 'Prix';
       this.datas.forEach((article) => {
         let shopName = article.tdc.shop.name;
         let price = article.price;
         let xaxis = article.tdc.date;
 
-        if (shopNameChart.series && shopNameChart.chartOptions) {
-          let serie = shopNameChart.series.filter((s) => s.name === shopName);
+        if (priceChart.series && priceChart.chartOptions) {
+          let serie = priceChart.series.filter((s) => s.name === shopName);
           if (serie.length === 0) {
-            shopNameChart.series.push({ name: shopName, data: [ price ] } as ChartSerie );
+            priceChart.series.push({ name: shopName, data: [ price ] } as ChartSerie );
           } else {
             serie[0].data.push(price);
           }
 
-          if (shopNameChart.chartOptions.xaxis.categories)
-            shopNameChart.chartOptions.xaxis.categories.push(xaxis);
+          if (priceChart.chartOptions.xaxis.categories)
+            priceChart.chartOptions.xaxis.categories.push(xaxis);
         }
       });
-      this.shopNameChart = shopNameChart;
-      this.shopNameChartReady = true;
+      this.priceChart = priceChart;
+      this.priceChartReady = true;
     },
     initQuantChart() {
       let quantChart = new ChartLines();
@@ -104,6 +107,25 @@ export default defineComponent({
       });
       this.quantChart = quantChart;
       this.quantChartReady = true;
+    },
+    initShopChart() {
+      let shopChart = new ChartPie();
+      let quant = [] as number[];
+      let shops = [] as string[];
+      this.datas.forEach((article) => {
+        let shop = article.tdc.shop.name;
+        let index = shops.indexOf(shop);
+        if (0 <= index) {
+          ++quant[index];
+        } else {
+          shops.push(shop);
+          quant.push(1);
+        }
+      });
+      shopChart.series = quant;
+      shopChart.chartOptions.labels = shops;
+      this.shopChart = shopChart;
+      this.shopChartReady = true;
     }
   }
 });

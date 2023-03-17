@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md" style="width: 100%">
-    {{ selected }}
+    debug: {{ selected }}
     <q-table
       flat dense
       title="Enseignes"
@@ -31,7 +31,7 @@
 import { defineComponent } from 'vue';
 import { useQuasar } from 'quasar'
 
-import TDCShopApi from '../../api/tdcshopsApi'
+import TDCShopService from '../../service/TDCShopService'
 import { TDCShop } from '../../models/models'
 import ShopDialogVue from './shopDialog.vue'
 
@@ -61,7 +61,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    TDCShopApi.getShops().then((r) => { this.datas = r.data; });
+    TDCShopService.getShops().then((r) => { this.datas = r.data; });
   },
   methods: {
     //eslint-disable-next-line
@@ -86,17 +86,14 @@ export default defineComponent({
         component: ShopDialogVue,
         componentProps: { shopReadOnly: row }
       }).onOk((r) => {
-        if (row.id) {
-          TDCShopApi.putShop(row.id, r)
-          .then((r) => {
-            let datas = this.datas as TDCShop[];
-            let shopIndex = datas.findIndex((shop) => shop.id === r.data.id);
-            if (-1 < shopIndex) {
-              datas[shopIndex] = Object.assign(datas[shopIndex], r.data);
-            }
+        TDCShopService.putShop(row.id, r)
+        .then((r) => {
+          let datas = this.datas as TDCShop[];
+          let shopIndex = datas.findIndex((shop) => shop.id === r.data.id);
+          if (-1 < shopIndex) {
+            datas[shopIndex] = Object.assign(datas[shopIndex], r.data);
           }
-          )
-        }
+        })
       }).onCancel(() => {
         console.log('Cancel')
       })
@@ -107,9 +104,9 @@ export default defineComponent({
         component: ShopDialogVue,
         componentProps: { shopReadOnly: this.selected[0] }
       }).onOk((r) => {
-          TDCShopApi.postShop(r)
+          TDCShopService.postShop(r)
           .then((r) => {
-            let datas = this.datas as TDCShopApi[];
+            let datas = this.datas as TDCShop[];
             datas.unshift(r.data);
             this.selected = [] as TDCShop[];
           })
@@ -138,14 +135,11 @@ export default defineComponent({
         cancel: true,
         persistent: true
       }).onOk(() => {
-        if (row.id) {
-          TDCShopApi.deleteShop(row.id)
-          .then(() => {
-            let datas = this.datas as TDCShop[];
-            this.datas = datas.filter((shop) => shop.id !== row.id);
-          }
-          )
-        }
+        TDCShopService.deleteShop(row.id)
+        .then(() => {
+          let datas = this.datas as TDCShop[];
+          this.datas = datas.filter((shop) => shop.id !== row.id);
+        })
       }).onCancel(() => {
         console.log('Cancel')
       })

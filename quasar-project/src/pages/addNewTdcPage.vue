@@ -120,7 +120,7 @@ import TicketDeCaisseCrud from '../components/ticketdecaissecrud/ticketdecaisseC
 
 import { Article, TDCAttachement, TDCCategory, TDCShop } from '../models/models';
 import { TicketDeCaisse } from '../models/models';
-import MLApi from '../api/mlApi';
+import MLService from '../service/MLService'
 
 export default defineComponent({
   name: 'AddTicketDeCaisse',
@@ -151,7 +151,7 @@ export default defineComponent({
         formData.append('type', this.docType);
         formData.append('name', '');
         this.isFileUploading = true;
-        MLApi.uploadAttachment(formData)
+        MLService.uploadAttachment(formData)
         .then((r) => {
           this.isFileUploading = false;
           this.step = 4;

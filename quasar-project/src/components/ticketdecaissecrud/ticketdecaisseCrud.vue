@@ -85,10 +85,10 @@ import { TDCAttachement, TDCCategory, TDCGroup, TDCShop } from '../../models/mod
 import { TicketDeCaisse, Article, ItemArticle } from '../../models/models';
 import { OnChangedShopNameResponse } from '../../models/models'
 
-import TDCShopApi from '../../api/tdcshopsApi'
-import CompletionApi from '../../api/completionApi'
-import TDCCategoryApi from '../../api/tdcCategoryApi'
-import TicketdecaisseApi from '../../api/ticketdecaisseApi'
+import TDCShopService from '../../service/TDCShopService'
+import CompletionService from '../../service/CompletionService'
+import TDCCategoryService from '../../service/TDCCategoryService'
+import TicketdecaisseService from '../../service/TicketdecaisseService'
 
 import AttachementForm from '../AttachementForm.vue'
 import ArticleCrud from './articleCrud.vue'
@@ -139,12 +139,12 @@ export default defineComponent({
     }
   },
   mounted() {
-    TDCShopApi.getShops().then((r) => { 
+    TDCShopService.getShops().then((r) => { 
       this.shopNameOptions = r.data;
       console.log(this.shopNameOptions)
       this.filteredShopNameOptions = this.shopNameOptions as TDCShop[]; 
     });
-    TDCCategoryApi.getCategories().then((r) => { 
+    TDCCategoryService.getCategories().then((r) => { 
       this.categoriesNameOptions = r.data;
       this.filteredCategoriesNameOptions = this.categoriesNameOptions as TDCCategory[];
     });
@@ -196,7 +196,7 @@ export default defineComponent({
         cancel: true,
         persistent: true
       }).onOk(() => {
-        TicketdecaisseApi.deleteTicketDeCaisse(this.tdc.id)
+        TicketdecaisseService.deleteTicketDeCaisse(this.tdc.id)
         .then(() => {
           this.$router.push({ path: '/' });
         })
@@ -210,7 +210,7 @@ export default defineComponent({
       this.tdc.shop.name = shopName;
       if (this.tdc.shop && this.tdc.shop.name && this.tdc.shop.name.length > 2 && this.filteredShopNameOptions.length > 0) {
         this.tdc.category.name = '';
-        CompletionApi.getCompletionOnChangedShopName(this.tdc.shop.name)
+        CompletionService.getCompletionOnChangedShopName(this.tdc.shop.name)
         .then((r) => {
           this.informationsOptions = r.data;
           this.onChangedCategorie(this.informationsOptions.item_category[0]);
@@ -250,16 +250,14 @@ export default defineComponent({
       this.$router.push({ path: '/' });
     },
     submitTicketDeCaisse () {
-      if (this.tdc) {
-          TicketdecaisseApi.postTicketDeCaisse(this.tdc)
-          .then(() => {
-            alert('ok')
-          })
-          .catch((r) => {
-            console.log(r);
-            alert(r);
-          });
-      }
+      TicketdecaisseService.postTicketDeCaisse(this.tdc)
+      .then(() => {
+        alert('ok TODO')
+      })
+      .catch((r) => {
+        console.log(r);
+        alert(r);
+      });
     },
     onUploadAttachementSubmited(r : TDCAttachement) {
           this.tdc.attachement = r;
