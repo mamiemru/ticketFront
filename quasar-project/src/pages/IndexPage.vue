@@ -1,6 +1,5 @@
 <template>
   <q-page class="row items-start justify-between" style="max-height: 100%">
-
     <ticket-de-caisse-list-summary class="col-2" />
     <div class="col-7 justify-center">
       <div class="q-pa-md q-gutter-sm row justify-between items-center">
@@ -19,12 +18,14 @@
 
 <script lang="ts">
 import { defineComponent, defineAsyncComponent } from 'vue';
+import { useQuasar } from 'quasar'
 
 const GraphOfTheMonth = defineAsyncComponent(() => import('../components/charts/GraphOfTheMonth.vue'))
 
 import TicketDeCaisseListSummary from '../components/mainPaage/ticketDeCaisseListSummary.vue';
 import SummaryOfTheMonth from '../components/mainPaage/summaryOfTheMonth.vue';
 import TableOfTheMonth from '../components/mainPaage/tableOfTheMonth.vue';
+import axiosErrorLayoutVue from '../layouts/axiosErrorLayout.vue';
 
 import { FeuilleIds } from '../models/models';
 
@@ -40,6 +41,10 @@ export default defineComponent({
       selectedIndex: 0,
       datas: [] as FeuilleIds[]
     }
+  },
+  setup() {
+    const q = useQuasar();
+    return { q }
   },
   mounted() {
     this.getDatas()
@@ -57,7 +62,7 @@ export default defineComponent({
       this.feuille_id = this.datas[this.selectedIndex].id;
       
       let date = new Date(this.datas[this.selectedIndex].date * 1000);
-      let months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+      let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       this.feuille_date = `${months[date.getMonth()]} ${date.getFullYear()}`;
     },
     getDatas() {
@@ -68,8 +73,15 @@ export default defineComponent({
           this.selectedIndex = this.datas.length-1;
           this.changeYearMonth()
       })
-      .catch((r) => {
+      .catch((error) => {
+        this.q.dialog({
+          component: axiosErrorLayoutVue,
+          componentProps: { response: error.response }
+        }).onOk((r) => {
           console.log(r);
+        }).onCancel(() => {
+          console.log('Cancel');
+        })
       })
     }
   }

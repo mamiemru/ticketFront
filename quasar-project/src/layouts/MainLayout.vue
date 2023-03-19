@@ -15,7 +15,9 @@
           Quasar App
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>
+          
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -54,59 +56,65 @@ const linksList = [
     title: 'Index',
     caption: 'quasar.dev',
     icon: 'home',
-    link: '/'
+    link: '/',
+    source: 'internal'
   },  
   {
     title: 'Ajouter Ticket De Caisse',
     caption: 'quasar.dev',
     icon: 'post_add',
-    link: '/#/addtdc'
+    link: '/#/addtdc',
+    source: 'internal'
   },  
   {
     title: 'Articles',
     caption: 'quasar.dev',
     icon: 'format_list_bulleted',
-    link: '/#/articles'
+    link: '/#/articles',
+    source: 'internal'
   },  
   {
     title: 'Shops',
     caption: 'quasar.dev',
     icon: 'format_list_bulleted',
-    link: '/#/shops'
+    link: '/#/shops',
+    source: 'internal'
   },  
   {
     title: 'Categories',
     caption: 'quasar.dev',
     icon: 'format_list_bulleted',
-    link: '/#/categories'
+    link: '/#/categories',
+    source: 'internal'
   },  
   {
     title: 'Docs',
     caption: 'quasar.dev',
     icon: 'school',
-    link: 'https://quasar.dev'
+    link: 'https://quasar.dev',
+    source: 'external'
   },  
   {
     title: 'Github',
     caption: 'github.com/quasarframework',
     icon: 'code',
-    link: 'https://github.com/quasarframework'
+    link: 'https://github.com/quasarframework',
+    source: 'external'
   },
   {
     title: 'Quasar Awesome',
     caption: 'Community Quasar projects',
     icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
+    link: 'https://awesome.quasar.dev',
+    source: 'external'
   }
 ];
 
 export default defineComponent({
   name: 'MainLayout',
-
   components: {
     EssentialLink
   },
-
   setup () {
     const leftDrawerOpen = ref(false)
 

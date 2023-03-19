@@ -2,7 +2,7 @@
   <q-item
     clickable
     tag="a"
-    target="_blank"
+    :target="(source === 'external')? '_blank': ''"
     :href="link"
   >
     <q-item-section
@@ -41,6 +41,11 @@ export default defineComponent({
     },
 
     icon: {
+      type: String,
+      default: ''
+    },
+
+    source: {
       type: String,
       default: ''
     }

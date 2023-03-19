@@ -4,8 +4,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { useQuasar } from 'quasar'
+
 import { TicketDeCaisse } from '../models/models';
+
 import TicketDeCaisseCrud from '../components/ticketdecaissecrud/ticketdecaisseCrud.vue'
+import axiosErrorLayoutVue from '../layouts/axiosErrorLayout.vue';
 
 import TicketdecaisseService from '../service/TicketdecaisseService'
 
@@ -18,6 +22,10 @@ export default defineComponent({
         tdc: {} as TicketDeCaisse
     }
   },  
+  setup() {
+    const q = useQuasar();
+    return { q }
+  },
   created() {
     let tdcId = this.$route.params.tdcId as string;
     TicketdecaisseService.getTicketDeCaisse(tdcId)
@@ -25,8 +33,15 @@ export default defineComponent({
         this.tdc = r.data;
         this.tdcId = this.tdc.id;
       })
-      .catch((r) => {
-        alert(r);
+      .catch((error) => {
+        this.q.dialog({
+          component: axiosErrorLayoutVue,
+          componentProps: { response: error.response }
+        }).onOk((r) => {
+          console.log(r);
+        }).onCancel(() => {
+          console.log('Cancel');
+        })
       })
   }
 });

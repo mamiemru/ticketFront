@@ -20,8 +20,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { useQuasar } from 'quasar'
 import { TicketDeCaisseHeaderResponse } from '../../models/models';
-
+import axiosErrorLayoutVue from '../../layouts/axiosErrorLayout.vue';
 import TicketdecaisseService from '../../service/TicketdecaisseService'
 
 export default defineComponent({
@@ -33,15 +34,26 @@ export default defineComponent({
       ticketDeCaisses: [] as TicketDeCaisseHeaderResponse[]
     }
   },
+  setup() {
+    const q = useQuasar();
+    return { q }
+  },
   mounted() {
-      TicketdecaisseService.getTicketDeCaisseList(21)
-      .then((r) => {
-          this.ticketDeCaisses = r.data;
-          this.is_loading = false;
+    TicketdecaisseService.getTicketDeCaisseList(21)
+    .then((r) => {
+      this.ticketDeCaisses = r.data;
+      this.is_loading = false;
+    })
+    .catch((error) => {
+      this.q.dialog({
+        component: axiosErrorLayoutVue,
+        componentProps: { response: error.response }
+      }).onOk((r) => {
+        console.log(r);
+      }).onCancel(() => {
+        console.log('Cancel');
       })
-      .catch((r) => {
-          console.log(r);
-      })
+    })
   },
   methods: {
     goToTdc(tdc: TicketDeCaisseHeaderResponse) {

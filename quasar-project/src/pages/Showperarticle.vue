@@ -18,6 +18,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { useQuasar } from 'quasar'
 
 import GraphMultiLines from '../components/charts/GraphMultiLines.vue'
 import GraphPie from '../components/charts/GraphPie.vue'
@@ -27,6 +28,7 @@ import { ChartLines } from '../models/models'
 import { ChartPie } from '../models/models'
 
 import ArticleService from '../service/ArticleService'
+import axiosErrorLayoutVue from '../layouts/axiosErrorLayout.vue';
 import ArticleCrud from '../components/ticketdecaissecrud/articleCrud.vue';
 
 export default defineComponent({
@@ -45,6 +47,10 @@ export default defineComponent({
       shopChartReady: false,
     }
   },
+  setup() {
+    const q = useQuasar();
+    return { q }
+  },
   mounted() {
     let ident = this.$route.params.ident as string;
     ArticleService.listArticleByIdent(ident)
@@ -55,6 +61,16 @@ export default defineComponent({
       this.initPriceChart();
       this.initQuantChart();
       this.initShopChart();
+    })
+    .catch((error) => {
+      this.q.dialog({
+        component: axiosErrorLayoutVue,
+        componentProps: { response: error.response }
+      }).onOk((r) => {
+        console.log(r);
+      }).onCancel(() => {
+        console.log('Cancel');
+      })
     })
   },
   methods: {
