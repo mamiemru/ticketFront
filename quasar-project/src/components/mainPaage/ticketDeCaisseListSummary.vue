@@ -1,8 +1,11 @@
 <template>
-  <div class="" style="max-width: 300px">
+  <div class="" style="max-width: 300px; height: 100vh">
     <q-circular-progress v-if="is_loading" indeterminate rounded size="50px" color="blue" class="q-ma-md flex flex-center" />
+    <div v-else-if="datas && datas.length === 0" class="row justify-center" style="border-right: grey solid 1px; height: 100vh">
+      Your ticket history is empty
+    </div>
     <q-list v-else dense bordered separator padding class="rounded-borders">
-        <q-item @click="goToTdc(ticket)" clickable v-ripple v-for="ticket in ticketDeCaisses" :key="ticket.id">
+        <q-item @click="goToTdc(ticket)" clickable v-ripple v-for="ticket in datas" :key="ticket.id">
             <q-item-section >
                 <q-item-label class="row justify-between">
                   <small>{{ ticket.shop.name }} - {{ ticket.shop.city }}</small>
@@ -31,7 +34,7 @@ export default defineComponent({
   data() {
     return {
       is_loading: true,
-      ticketDeCaisses: [] as TicketDeCaisseHeaderResponse[]
+      datas: [] as TicketDeCaisseHeaderResponse[]
     }
   },
   setup() {
@@ -41,7 +44,7 @@ export default defineComponent({
   mounted() {
     TicketdecaisseService.getTicketDeCaisseList(21)
     .then((r) => {
-      this.ticketDeCaisses = r.data;
+      this.datas = r.data;
       this.is_loading = false;
     })
     .catch((error) => {

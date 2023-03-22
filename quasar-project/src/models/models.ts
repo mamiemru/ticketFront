@@ -17,6 +17,7 @@ export interface TDCShop {
   ident: string;
   name: string;
   city: string;
+  postal_code: number;
   localisation: string;
 }
 

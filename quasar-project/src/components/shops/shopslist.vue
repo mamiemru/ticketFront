@@ -45,6 +45,7 @@ export default defineComponent({
         { name: 'Ident', label: 'ident', field: 'ident', sortable: true, align: 'left', },
         { name: 'Name', label: 'name', field: 'name', sortable: true, align: 'left' },
         { name: 'City', label: 'city', field: 'city', sortable: true, align: 'left' },
+        { name: 'Postal Code', label: 'postal_code', field: 'postal_code', sortable: true, align: 'left' },
         { name: 'Localisation', label: 'localisation', field: 'localisation', sortable: true, align: 'left' }
       ],
       pagination: {

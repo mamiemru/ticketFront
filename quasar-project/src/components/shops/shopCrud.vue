@@ -20,6 +20,10 @@
             <template v-slot:prepend><q-icon name="label" /></template>
           </q-input>   
           
+          <q-input v-model="$attrs.shop.postal_code" label="Postal Code" dense type="number" mask="#####" fill-mask="0" >
+            <template v-slot:prepend><q-icon name="label" /></template>
+          </q-input>
+
           <q-input v-model="$attrs.shop.localisation" label="Localisation" dense >
             <template v-slot:prepend><q-icon name="label" /></template>
           </q-input>
