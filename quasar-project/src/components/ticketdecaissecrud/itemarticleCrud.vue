@@ -20,6 +20,10 @@
           >
             <template v-slot:prepend><q-icon name="fingerprint" /></template>
           </q-input>
+          <q-input label="EAN13" dense class="col-5" v-model="$attrs.item.ean13" disable
+          >
+            <template v-slot:prepend><q-icon name="fingerprint" /></template>
+          </q-input>
 
           <q-input v-model="$attrs.item.name" label="Description article" :dense="true" >
             <template v-slot:prepend><q-icon name="badge" /></template>

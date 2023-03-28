@@ -22,9 +22,19 @@
             <template v-slot:prepend><q-icon name="fingerprint" /></template>
           </q-select>
 
-          <q-input v-model="$attrs.article.item.name" label="Description article" :dense="true" >
+          <q-input v-model="$attrs.article.item.ean13" label="EAN13" dense>
             <template v-slot:prepend><q-icon name="badge" /></template>
           </q-input>
+
+          <q-input v-model="$attrs.article.item.name" label="Description article" dense>
+            <template v-slot:prepend><q-icon name="badge" /></template>
+          </q-input>
+
+          <q-select label="Marque" dense class="col-5" :options="articleBrandOptions" @input-value="onChangeArticleBrand"
+            :model-value="$attrs.article.item.brand.name" use-input fill-input input-debounce="0" hide-selected
+          >
+            <template v-slot:prepend><q-icon name="label" /></template>
+          </q-select>
 
           <q-select label="Categorie" dense class="col-5" :options="articleCategoriesOptions" @input-value="onChangedArticleCategorie"
             :model-value="$attrs.article.item.category.name" use-input fill-input input-debounce="0" hide-selected
@@ -62,15 +72,19 @@
         </q-card-actions>
       </q-form>
 
-      <q-card-section class="col-6" v-else>
+      <q-card-section class="col-7" v-else>
         <q-card-section>
-          <q-input v-model="$attrs.article.item.ident" label="Identifiant article" :dense="true" disable />
-          <q-input v-model="$attrs.article.item.name" label="Description article" :dense="true" disable />
-          <q-input v-model="$attrs.article.item.category.name" label="Categorie" :dense="true" disable />
-          <q-input v-model="$attrs.article.item.group.name" label="Groupe" :dense="true" disable />
-          <q-input v-model="$attrs.article.price" label="Prix" :dense="true" disable />
-          <q-input v-model="$attrs.article.quantity" label="Quantité" :dense="true" disable />
-          <q-input v-model="$attrs.article.remise" label="Remise" :dense="true" disable />
+          <q-item-label>{{ $attrs.article.item.name }}</q-item-label>
+          <q-item-label >(<small>{{ $attrs.article.item.ident }})</small></q-item-label>
+          <q-item-label caption># <small>{{ $attrs.article.item.ean13 }}</small></q-item-label>
+          <q-item-label>{{ ($attrs.article.brand)? $attrs.article.brand.name : ''}}</q-item-label>
+          <q-separator class="q-my-md" />
+          <q-item-label>Groupe: {{ ($attrs.article.item.group)? $attrs.article.item.group.name : '<aucun>'}}</q-item-label>
+          <q-item-label>Catégorie: {{ ($attrs.article.item.category)? $attrs.article.item.category.name : '<aucune>'}}</q-item-label>
+          <q-separator class="q-my-md" />
+          <q-item-label>Prix unitaire: {{ $attrs.article.price }}</q-item-label>
+          <q-item-label>Quantitée: {{ $attrs.article.quantity }}</q-item-label>
+          <q-item-label>Remise: {{ $attrs.article.remise }}</q-item-label>
         </q-card-section>
         <q-card-actions horizontal align="right" class="justify-start q-px-md" v-if="$attrs.canEdit">
           <q-btn flat round color="blue" icon="edit" @click="$emit('onEditItem', $attrs.index)" />
@@ -87,7 +101,7 @@ import { useQuasar } from 'quasar'
 
 import AttachementForm from '../AttachementForm.vue'
 
-import { Article, TDCAttachement, TDCCategory, TDCGroup } from '../../models/models';
+import { Article, TDCAttachement, TDCBrand, TDCCategory, TDCGroup } from '../../models/models';
 
 import CompletionService from '../../service/CompletionService';
 
@@ -110,6 +124,7 @@ export default defineComponent({
         identOptions: [] as string[],
         filteredIdentOptions: [] as string[],
         articleCategoriesOptions: [] as string[],
+        articleBrandOptions: [] as string[],
         articleGroupeOptions: [] as string[]
     }
   },
@@ -120,6 +135,7 @@ export default defineComponent({
             this.identOptions = r.data.item_ident;
             this.filteredIdentOptions = r.data.item_ident;
             this.articleCategoriesOptions = r.data.item_category;
+            this.articleBrandOptions = r.data.item_brand;
             this.articleGroupeOptions = r.data.item_group;
         })
       }
@@ -154,6 +170,10 @@ export default defineComponent({
         let article = this.$attrs.article as Article;
         article.item.category = {name: category} as TDCCategory;
     },
+    onChangeArticleBrand(brand: string) {
+        let article = this.$attrs.article as Article;
+        article.item.brand = {name: brand} as TDCBrand;
+    },
     onChangedArticleGroupe(group : string) {
         let article = this.$attrs.article as Article;
         article.item.group = {name: group} as TDCGroup;
@@ -170,6 +190,7 @@ export default defineComponent({
                 article.item.category = (r.data.item.category && r.data.item.category.name)? r.data.item.category : { name: '', id: 0, required: false} as TDCCategory;
                 article.item.group = (r.data.item.group && r.data.item.group.name)? r.data.item.group : { name: '', id: 0 } as TDCGroup;
                 article.item.attachement = (r.data.item.attachement)? r.data.item.attachement : {} as TDCAttachement;
+                article.item.brand = (r.data.item.brand)? r.data.item.brand : {} as TDCBrand;
                 article.quantity = (r.data.quantity)? r.data.quantity : 1;
                 article.remise = (r.data.remise)? r.data.remise : 0.0;
                 article.price = r.data.price;

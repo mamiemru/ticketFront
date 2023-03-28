@@ -33,6 +33,11 @@ export interface TDCGroup {
   name: string;
 }
 
+export interface TDCBrand {
+  id: number;
+  name: string;
+}
+
 export interface ShopNameResponse {
   shop: string[];
   categorie: string[];
@@ -43,6 +48,7 @@ export interface OnChangedShopNameResponse {
   tdc_category: string[];
   item_ident: string[];
   item_category: string[];
+  item_brand: string[];
   item_name: string[];
   item_group: string[];
   quant: number;
@@ -64,7 +70,8 @@ export interface TicketDeCaisseHeaderResponse {
   shop: TDCShop;
   date: string;
   category: TDCCategory;
-  total?: number;
+  total: number;
+  type: string;
 }
 
 export interface TDCAttachement {
@@ -123,11 +130,13 @@ export interface FeuilleIds {
 
 export interface ItemArticle {
   id: number;
+  ean13: string;
   ident: string;
   name?: string;
   category?: TDCCategory;
   group?: TDCGroup;
   attachement?: TDCAttachement;
+  brand?: TDCBrand;
 }
 
 export interface TicketDeCaisseHeader {
@@ -135,6 +144,8 @@ export interface TicketDeCaisseHeader {
   shop: TDCShop;
   date: string;
   category: TDCCategory;
+  total: number;
+  type: string;
 }
 
 export interface Article {
@@ -152,7 +163,8 @@ export interface TicketDeCaisse {
   category: TDCCategory;
   articles: Article[];
   attachement: TDCAttachement;
-  total?: number | null;
+  total: number;
+  type: string;
 }
 
 export interface ItemArticlePagination {

@@ -9,8 +9,10 @@
       <q-item clickable @click="onIdentClicked">
         <q-item-section avatar><q-icon color="primary" name="fingerprint" /></q-item-section>
         <q-item-section>
-          <q-item-label>{{ $attrs.itemarticle.ident }}</q-item-label>
-          <q-item-label caption>{{ $attrs.itemarticle.name }}</q-item-label>
+          <q-item-label v-if="$attrs.itemarticle.brand">{{ $attrs.itemarticle.brand.name }}</q-item-label>
+          <q-item-label>{{ $attrs.itemarticle.name }}</q-item-label>
+          <q-item-label caption>{{ $attrs.itemarticle.ident }}</q-item-label>
+          <q-item-label caption><small># {{ $attrs.itemarticle.ean13 }}</small></q-item-label>
         </q-item-section>
       </q-item>
 
