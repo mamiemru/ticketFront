@@ -169,6 +169,7 @@ export default defineComponent({
       this.isFileUploading = false;
       this.step = 4;
       this.tdc = {
+        type: this.docType,
         shop: {} as TDCShop, category: {} as TDCCategory, attachement: {} as TDCAttachement,
         articles: [] as Article[]
       } as TicketDeCaisse;
