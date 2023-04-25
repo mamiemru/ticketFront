@@ -14,9 +14,9 @@ class CompletionApi {
         );
     }
 
-    static getCompletionOnChangedShopName(shop : string): Promise<AxiosResponse<OnChangedShopNameResponse>> {
+    static getCompletionOnChangedShopId(shop_id : number): Promise<AxiosResponse<OnChangedShopNameResponse>> {
         return axiosConfig.get<OnChangedShopNameResponse>(
-            `completion/changed/${shop}/`,
+            `completion/changed/${shop_id}/`,
             
         );
     }    

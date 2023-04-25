@@ -19,6 +19,7 @@ export interface TDCShop {
   city: string;
   postal_code: number;
   localisation: string;
+  valide: boolean;
 }
 
 export interface TDCCategory {
@@ -130,7 +131,7 @@ export interface FeuilleIds {
 
 export interface ItemArticle {
   id: number;
-  ean13: string;
+  ean13: number;
   ident: string;
   name?: string;
   category?: TDCCategory;

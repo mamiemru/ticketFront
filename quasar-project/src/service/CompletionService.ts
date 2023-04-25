@@ -11,11 +11,8 @@ class CompletionService {
         return CompletionApi.getCompletionShopName();
     }
 
-    static getCompletionOnChangedShopName(shop : string | undefined): Promise<AxiosResponse<OnChangedShopNameResponse>> {
-        if (shop) {
-            return CompletionApi.getCompletionOnChangedShopName(shop);
-        }
-        throw new Error('shop is undefined');
+    static getCompletionOnChangedShopId(shop_id : number): Promise<AxiosResponse<OnChangedShopNameResponse>> {
+        return CompletionApi.getCompletionOnChangedShopId(shop_id);
     }    
     
     static getCompletionOnChangedArticleIdent(shop : string | undefined, itemArticle: string | undefined): Promise<AxiosResponse<Article>> {

@@ -96,22 +96,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { useQuasar } from 'quasar'
 
 import AttachementForm from '../AttachementForm.vue'
 
-import { Article, TDCAttachement, TDCBrand, TDCCategory, TDCGroup } from '../../models/models';
+import { Article, TDCAttachement, TDCBrand, TDCCategory, TDCGroup, TDCShop } from '../../models/models';
 
 import CompletionService from '../../service/CompletionService';
 
 export default defineComponent({
-  name: 'EditArticle',
+  name: 'ArticleCrud',
   components: { AttachementForm },
   props: {
-      shop: String,
-      localisation: String,
-      categorie: String
+      shop: {
+        type: Object as PropType<TDCShop>,
+        required: true
+      },
   },
   setup() {
     const q = useQuasar()
@@ -129,8 +130,8 @@ export default defineComponent({
     }
   },
   mounted() {
-      if (this.$attrs.canCreate) {
-        CompletionService.getCompletionOnChangedShopName(this.shop)
+      if (this.$attrs.canCreate && this.shop.id) {
+        CompletionService.getCompletionOnChangedShopId(this.shop.id)
         .then((r) => {
             this.identOptions = r.data.item_ident;
             this.filteredIdentOptions = r.data.item_ident;
@@ -161,6 +162,7 @@ export default defineComponent({
       article.item.name = undefined;
       article.item.category = undefined;
       article.item.group = undefined;
+      article.item.ean13 = 0;
       article.price = 0;
       article.quantity = 1;
       article.remise = 0.0;
@@ -184,9 +186,10 @@ export default defineComponent({
         article.item.ident = ident;
       }
       if (article.item.ident && article.item.ident.length > 2) {
-          CompletionService.getCompletionOnChangedArticleIdent(this.shop, article.item.ident)
+          CompletionService.getCompletionOnChangedArticleIdent(this.shop.name, article.item.ident)
           .then((r) => { 
                 article.item.name = (r.data.item && r.data.item.name)? r.data.item.name : ident;
+                article.item.ean13 = r.data.item.ean13;
                 article.item.category = (r.data.item.category && r.data.item.category.name)? r.data.item.category : { name: '', id: 0, required: false} as TDCCategory;
                 article.item.group = (r.data.item.group && r.data.item.group.name)? r.data.item.group : { name: '', id: 0 } as TDCGroup;
                 article.item.attachement = (r.data.item.attachement)? r.data.item.attachement : {} as TDCAttachement;

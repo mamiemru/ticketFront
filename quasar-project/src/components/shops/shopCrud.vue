@@ -1,6 +1,7 @@
 <template>
   <q-card class="text-grey" flat bordered square>
     <q-card-section>
+      <div class="text-h6">{{ introduction_text }}</div>
       <div class="text-h6">Editer une enseigne</div>
     </q-card-section>
 
@@ -47,6 +48,12 @@ import { TDCShop } from '../../models/models';
 export default defineComponent({
   name: 'ItemArticleCrud',
   components: {},
+  props: {
+    introduction_text: {
+      type: String,
+      required: false
+    }
+  },
   setup() {
     const q = useQuasar()
     return { q }

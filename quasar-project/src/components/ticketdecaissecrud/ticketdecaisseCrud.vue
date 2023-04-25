@@ -11,11 +11,11 @@
       <div class="col-7 column justify-between">
         <div class="row justify-between">
           <div class="col-5">
-            <q-select label="Shop" dense class="col-6" @input-value="onChangedShop" :disable="!$attrs.canEdit"
-              :options="filteredShopNameOptions"
+            <q-select label="Shop" dense class="col-6" @update:model-value="onChangedShop" :disable="!$attrs.canEdit"
+              :options="filteredShopNameOptions" emit-value map-options @filter="filterShops"
               :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
               :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : ''"
-              :model-value="tdc.shop" use-input fill-input input-debounce="0" hide-selected @filter="filterShops"
+              v-model="tdc.shop.id" use-input fill-input input-debounce="0" hide-selected
             >
                 <template v-slot:prepend><q-icon name="store" /></template>
             </q-select>
@@ -98,6 +98,7 @@ import AttachementForm from '../AttachementForm.vue'
 import ArticleCrud from './articleCrud.vue'
 import QDateTimePicker from '../QDateTimePicker.vue'
 import articleCrudDialogVue from './articleCrudDialog.vue';
+import ShopDialogVue from '../shops/shopDialog.vue'
 
 export default defineComponent({
   name: 'TicketDeCaisseCrud',
@@ -122,7 +123,7 @@ export default defineComponent({
     const q = useQuasar()
     let tdc = context.attrs.tdc as TicketDeCaisse;
     if (tdc.shop === null) {
-      tdc.shop = {} as TDCShop;
+      tdc.shop = { valide: false } as TDCShop;
     }
     if (tdc.category === null) {
       tdc.category = {} as TDCCategory;
@@ -156,6 +157,17 @@ export default defineComponent({
         this.categoriesNameOptions = r.data;
         this.filteredCategoriesNameOptions = this.categoriesNameOptions as TDCCategory[];
       });
+    }
+
+    if (this.tdc.shop && this.tdc.shop.valide === false) {
+      this.q.dialog({
+        component: ShopDialogVue,
+        componentProps: { shopReadOnly: this.tdc.shop, introduction_text: 'Nous avons pas trouvé l\'enseigne dans notre base' }
+      }).onOk((r) => {
+        this.tdc.shop = Object.assign(this.tdc.shop, r);
+      }).onCancel(() => {
+        console.log('Cancel')
+      })
     }
   },
   methods: {
@@ -216,24 +228,26 @@ export default defineComponent({
         .catch((r) => { alert(r); console.log(r); })
       })
     },
-    onChangedShop(shopName : string) {
-      if (this.tdc.shop === null) {
-        this.tdc.shop = {} as TDCShop;
-      }
-      this.tdc.shop.name = shopName;
-      if (this.tdc.shop && this.tdc.shop.name && this.tdc.shop.name.length > 2 && this.filteredShopNameOptions.length > 0) {
-        this.tdc.category.name = '';
-        CompletionService.getCompletionOnChangedShopName(this.tdc.shop.name)
-        .then((r) => {
-          this.informationsOptions = r.data;
-          this.onChangedCategorie(this.informationsOptions.item_category[0]);
-          this.tdc.shop = Object.assign(this.tdc.shop, r.data.tdc);
-          this.tdcKey += 1;
-        })
-        .catch((r) => {
-          console.log(r);
-          this.tdc.shop = { id: undefined, name: shopName, ident: '', city: '', localisation: '' } as TDCShop;
-        })
+    onChangedShop(shop_id : number) {
+      if (shop_id) {
+        let selected_shops = this.shopNameOptions.filter((shop) => shop.id === shop_id);
+        if (selected_shops && selected_shops[0]) {
+          this.tdc.shop = selected_shops[0];
+          if (this.tdc.shop.id) {
+            CompletionService.getCompletionOnChangedShopId(this.tdc.shop.id)
+            .then((r) => {
+              this.informationsOptions = r.data;
+              this.onChangedCategorie(this.informationsOptions.item_category[0]);
+              if (r.data.tdc.valide) {
+                this.tdc.shop = Object.assign(this.tdc.shop, r.data.tdc);
+              }
+              this.tdcKey += 1;
+            })
+            .catch((r) => {
+              console.log(r);
+            })
+          }
+        }
       }
     },
     onChangedCategorie(categorieName : string) {

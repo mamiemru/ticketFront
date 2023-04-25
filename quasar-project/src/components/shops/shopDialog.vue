@@ -1,7 +1,7 @@
 <template>
   <q-dialog ref="dialog" @hide="onDialogHide">
     <shop-crud-vue style="width: 700px; max-width: 80vw;"
-      @onOk="onOKClick" @onCancel="onCancelClick"
+      @onOk="onOKClick" @onCancel="onCancelClick" :introduction_text="introduction_text"
       :shop="shop"
     />
   </q-dialog>
@@ -20,6 +20,10 @@ export default defineComponent({
     shopReadOnly: {
       type: Object as PropType<TDCShop>,
       required: true
+    },
+    introduction_text: {
+      type: String,
+      required: false
     }
   },
   data () {
