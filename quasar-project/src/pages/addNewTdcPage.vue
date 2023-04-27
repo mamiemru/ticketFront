@@ -171,7 +171,8 @@ export default defineComponent({
       this.tdc = {
         type: this.docType,
         shop: {} as TDCShop, category: {} as TDCCategory, attachement: {} as TDCAttachement,
-        articles: [] as Article[]
+        articles: [] as Article[],
+        total: 0.0, remise: 0.0
       } as TicketDeCaisse;
       this.editTdc = true;
     }

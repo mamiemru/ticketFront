@@ -60,11 +60,7 @@
             <template v-slot:prepend><q-icon name="tag" /></template>
           </q-input>
 
-          <q-input v-model="$attrs.article.remise" label="Remise" :dense="true" 
-            min="0.0"
-          >
-            <template v-slot:prepend><q-icon name="discount" /></template>
-          </q-input>
+        <q-discount-view :total="$attrs.article.price" :remise_object="$attrs.article" :canEdit="true" />
         </q-card-section>
         <q-card-actions align="right" class="bg-white text-teal" v-if="$attrs.canCreate">
           <q-btn flat label="OK" color="blue" type="submit" />
@@ -104,10 +100,11 @@ import AttachementForm from '../AttachementForm.vue'
 import { Article, TDCAttachement, TDCBrand, TDCCategory, TDCGroup, TDCShop } from '../../models/models';
 
 import CompletionService from '../../service/CompletionService';
+import QDiscountView from '../QDiscountView.vue';
 
 export default defineComponent({
   name: 'ArticleCrud',
-  components: { AttachementForm },
+  components: { AttachementForm, QDiscountView },
   props: {
       shop: {
         type: Object as PropType<TDCShop>,

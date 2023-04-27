@@ -48,10 +48,11 @@
             </q-select>
           </div>
           <div class="col-2">
-            <q-input v-model="tdc.total" label="Total" :dense="true" disable class="col-5"
-            >
-              <template v-slot:prepend><q-icon name="euro_symbol" /></template>
-            </q-input>
+              <q-input v-model="tdc.total" label="Total" :dense="true" disable class="col-5"
+              >
+                <template v-slot:prepend><q-icon name="euro_symbol" /></template>
+              </q-input>
+            <q-discount-view :total="tdc.total" :remise_object="tdc" :canEdit="$attrs.canEdit" />
           </div>
         </div>
 
@@ -65,8 +66,7 @@
           <article-crud class="col-6" v-for="(article, i) in tdc.articles" :key="i" 
               :canCreate="false" :canEdit="$attrs.canEdit" :canDelete="true"
               :index="i" @onDeleteItem="onDeleteItem" @onEditItem="onEditItem"
-              :shop="tdc.shop.name" :localisation="tdc.shop.localisation" :categorie="tdc.category.name"
-              :article="article"
+              :shop="tdc.shop" :article="article"
           />
         </div>
       </div>
@@ -99,10 +99,11 @@ import ArticleCrud from './articleCrud.vue'
 import QDateTimePicker from '../QDateTimePicker.vue'
 import articleCrudDialogVue from './articleCrudDialog.vue';
 import ShopDialogVue from '../shops/shopDialog.vue'
+import QDiscountView from '../QDiscountView.vue';
 
 export default defineComponent({
   name: 'TicketDeCaisseCrud',
-  components: { ArticleCrud, QDateTimePicker, AttachementForm },
+  components: { ArticleCrud, QDiscountView, QDateTimePicker, AttachementForm },
   data () {
     return {
       file: null,

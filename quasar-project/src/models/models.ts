@@ -147,6 +147,7 @@ export interface TicketDeCaisseHeader {
   category: TDCCategory;
   total: number;
   type: string;
+  remise: number;
 }
 
 export interface Article {
@@ -166,6 +167,7 @@ export interface TicketDeCaisse {
   attachement: TDCAttachement;
   total: number;
   type: string;
+  remise: number;
 }
 
 export interface ItemArticlePagination {
@@ -278,4 +280,9 @@ export class AArticle implements Article {
   item = { group: {} as TDCGroup, category: {} as TDCCategory } as ItemArticle;
   tdc = { shop: {} as TDCShop, category: {} as TDCCategory } as TicketDeCaisseHeader;
   
+}
+
+export interface RemiseInterface {
+  remise: number;
+  total: number;
 }
