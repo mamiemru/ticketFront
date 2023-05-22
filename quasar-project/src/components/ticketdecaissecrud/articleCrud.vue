@@ -30,11 +30,16 @@
             <template v-slot:prepend><q-icon name="badge" /></template>
           </q-input>
 
-          <q-select label="Marque" dense class="col-5" :options="articleBrandOptions" @input-value="onChangeArticleBrand"
-            :model-value="$attrs.article.item.brand.name" use-input fill-input input-debounce="0" hide-selected
-          >
-            <template v-slot:prepend><q-icon name="label" /></template>
-          </q-select>
+          {{ $attrs.article.item.brand }}
+
+          <div class="row justify-between">
+            <q-select label="Marque" dense class="col-10" :options="articleBrandOptions" @input-value="onChangeArticleBrand"
+              :model-value="$attrs.article.item.brand.name" use-input fill-input input-debounce="0" hide-selected
+            >
+              <template v-slot:prepend><q-icon name="label" /></template>
+            </q-select>
+            <q-btn class="col-2" flat color="blue" icon="add" dense @click="addNewShop" :disabled="$attrs.article.item.brand && $attrs.article.item.brand.name"/>
+          </div>
 
           <q-select label="Categorie" dense class="col-5" :options="articleCategoriesOptions" @input-value="onChangedArticleCategorie"
             :model-value="$attrs.article.item.category.name" use-input fill-input input-debounce="0" hide-selected
@@ -72,8 +77,7 @@
         <q-card-section>
           <q-item-label>{{ $attrs.article.item.name }}</q-item-label>
           <q-item-label >(<small>{{ $attrs.article.item.ident }})</small></q-item-label>
-          <q-item-label caption># <small>{{ $attrs.article.item.ean13 }}</small></q-item-label>
-          <q-item-label>{{ ($attrs.article.brand)? $attrs.article.brand.name : ''}}</q-item-label>
+          <q-item-label caption>{{ ($attrs.article.item.brand)? $attrs.article.item.brand.name : ''}} #<small>{{ $attrs.article.item.ean13 }}</small></q-item-label>
           <q-separator class="q-my-md" />
           <q-item-label>Groupe: {{ ($attrs.article.item.group)? $attrs.article.item.group.name : '<aucun>'}}</q-item-label>
           <q-item-label>Catégorie: {{ ($attrs.article.item.category)? $attrs.article.item.category.name : '<aucune>'}}</q-item-label>
@@ -100,7 +104,9 @@ import AttachementForm from '../AttachementForm.vue'
 import { Article, TDCAttachement, TDCBrand, TDCCategory, TDCGroup, TDCShop } from '../../models/models';
 
 import CompletionService from '../../service/CompletionService';
+import ItemArticleBrandService from '../../service/ItemArticleBrandService';
 import QDiscountView from '../QDiscountView.vue';
+import BrandDialogVue from '../brands/brandDialog.vue'
 
 export default defineComponent({
   name: 'ArticleCrud',
@@ -171,7 +177,11 @@ export default defineComponent({
     },
     onChangeArticleBrand(brand: string) {
         let article = this.$attrs.article as Article;
-        article.item.brand = {name: brand} as TDCBrand;
+        if (brand) {
+          article.item.brand = {name: brand} as TDCBrand;
+        } else {
+          article.item.brand = {} as TDCBrand;
+        }
     },
     onChangedArticleGroupe(group : string) {
         let article = this.$attrs.article as Article;
@@ -219,6 +229,21 @@ export default defineComponent({
     onUploadAttachementSubmited(r : TDCAttachement) {
       let article = this.$attrs.article as Article;
       article.item.attachement = r;
+    },
+
+    addNewShop() {
+      let article = this.$attrs.article as Article;
+      this.q.dialog({
+        component: BrandDialogVue, 
+        componentProps: { readOnly: article.item.brand, introduction_text: '' }
+      }).onOk((r) => {
+        ItemArticleBrandService.postBrand(r)
+        .then((r) => { article.item.brand = r.data; this.articleBrandOptions.push(r.data.name); })
+        .catch((r) => { console.log(r); alert(r); })
+      }).onCancel(() => {
+        article.item.brand = {} as TDCBrand;
+        console.log('Cancel')
+      })
     }
   }
 })

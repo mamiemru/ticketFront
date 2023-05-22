@@ -10,12 +10,15 @@
     <div class="row items-start justify-around q-py-md" style="width: 100%;">
       <div class="col-7 column justify-between">
         <div class="row justify-between">
-          <div class="col-5">
+          <div class="col-2 justify-center">
+            <q-img v-if="tdc.shop.enseigne" :src="tdc.shop.enseigne.icon" style="max-height: 290px;" fit="scale-down" />
+          </div>
+          <div class="col-4">
             <q-select label="Shop" dense class="col-6" @update:model-value="onChangedShop" :disable="!$attrs.canEdit"
               :options="filteredShopNameOptions" emit-value map-options @filter="filterShops"
               :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
               :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : ''"
-              v-model="tdc.shop.id" use-input fill-input input-debounce="0" hide-selected
+              v-model="tdc.shop" use-input fill-input input-debounce="0" hide-selected
             >
                 <template v-slot:prepend><q-icon name="store" /></template>
             </q-select>
@@ -35,10 +38,10 @@
               </q-input>
             </div>
           </div>
-          <div class="col-4">
-            <q-date-time-picker :tdc="tdc" class="col-5" :canEdit="$attrs.canEdit"
+          <div class="col-3">
+            <q-date-time-picker :tdc="tdc" class="col-4" :canEdit="$attrs.canEdit"
             />
-            <q-select label="Catégorie" dense class="col-5" @input-value="onChangedCategorie" :key="tdcKey"
+            <q-select label="Catégorie" dense class="col-4" @input-value="onChangedCategorie" :key="tdcKey"
               :options="filteredCategoriesNameOptions"  :disable="!$attrs.canEdit"
               :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
               :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : ''"
@@ -60,7 +63,8 @@
           <q-btn outline color="green" icon="add_shopping_cart" @click="addNewArticle" label="Ajouter un article manuellement" 
             :disabled="!tdc.shop || !tdc.shop.name"
           />
-          <q-btn outline color="green" icon="add_photo_alternate" @click="addNewArticle" label="Ajouter un article via la galery" disabled />
+          <q-btn outline color="green" icon="tag" @click="addNewArticle" label="Ajouter via EAN13 GS1" disabled />
+          <q-btn outline color="green" icon="add_photo_alternate" @click="addNewArticle" label="Ajouter via la galery" disabled />
         </div>
         <div :key="articlesListKey" class="row q-py-md" v-if="tdc.type != 'recepiece'">
           <article-crud class="col-6" v-for="(article, i) in tdc.articles" :key="i" 
@@ -73,7 +77,7 @@
       <q-card class="my-card col-4" flat bordered v-if="tdc.attachement && tdc.attachement.image">
         <q-img :src="tdc.attachement.image" />
       </q-card>
-      <q-card class="my-card col-4" flat bordered v-else>
+      <q-card class="my-card col-4" flat bordered v-else-if="$attrs.canEdit">
         <attachement-form @submited="onUploadAttachementSubmited" @error="null" category="ticket" type="ticket" />
       </q-card>
     </div>
@@ -231,7 +235,7 @@ export default defineComponent({
     },
     onChangedShop(shop_id : number) {
       if (shop_id) {
-        let selected_shops = this.shopNameOptions.filter((shop) => shop.id === shop_id);
+        let selected_shops = this.shopNameOptions.filter((shop : TDCShop) => shop.id === Number(shop_id));
         if (selected_shops && selected_shops[0]) {
           this.tdc.shop = selected_shops[0];
           if (this.tdc.shop.id) {
@@ -240,7 +244,7 @@ export default defineComponent({
               this.informationsOptions = r.data;
               this.onChangedCategorie(this.informationsOptions.item_category[0]);
               if (r.data.tdc.valide) {
-                this.tdc.shop = Object.assign(this.tdc.shop, r.data.tdc);
+                this.tdc.shop = r.data.tdc;
               }
               this.tdcKey += 1;
             })

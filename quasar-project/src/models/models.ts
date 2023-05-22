@@ -12,8 +12,15 @@ export interface Ref<T> {
   value: T
 }
 
+export interface TDCEnseigne {
+  id: number | undefined;
+  name: string;
+  icon: string;
+}
+
 export interface TDCShop {
   id: number | undefined;
+  enseigne: TDCEnseigne;
   ident: string;
   name: string;
   city: string;

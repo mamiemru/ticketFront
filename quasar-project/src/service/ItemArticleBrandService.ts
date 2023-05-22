@@ -9,6 +9,10 @@ class ItemArticleBrandService {
         return ItemArticleBrandApi.getBrands();
     }
 
+    static postBrand(brand : TDCBrand): Promise<AxiosResponse<TDCBrand>> {
+        return ItemArticleBrandApi.post(brand);
+    }
+
 }
 
 export default ItemArticleBrandService;

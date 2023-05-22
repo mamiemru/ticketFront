@@ -1,13 +1,13 @@
 <template>
-  <q-card class="my-card" bordered square flat>
+  <q-card class="my-card" bordered square flat dense>
     <q-card-section class="row justify-center">
       <img :src="$attrs.itemarticle.attachement.image" v-if="$attrs.itemarticle.attachement && $attrs.itemarticle.attachement.image" class="col-5">
-      <q-btn v-else flat round color="blue" icon="edit" @click="openItemArticleCrudDialog" />
+      <q-btn flat round color="blue" icon="edit" @click="openItemArticleCrudDialog" />
     </q-card-section>
 
     <q-list>
-      <q-item clickable @click="onIdentClicked">
-        <q-item-section avatar><q-icon color="primary" name="fingerprint" /></q-item-section>
+      <q-item clickable @click="onIdentClicked" dense>
+        <q-item-section avatar><q-icon color="primary" /></q-item-section>
         <q-item-section>
           <q-item-label v-if="$attrs.itemarticle.brand">{{ $attrs.itemarticle.brand.name }}</q-item-label>
           <q-item-label>{{ $attrs.itemarticle.name }}</q-item-label>
@@ -16,10 +16,10 @@
         </q-item-section>
       </q-item>
 
-      <q-item>
-        <q-item-section avatar><q-icon color="red" name="label" /></q-item-section>
+      <q-item dense>
+        <q-item-section avatar><q-icon color="red" /></q-item-section>
         <q-item-section>
-          <q-item-label>{{ $attrs.itemarticle.category.name }}</q-item-label>
+          <q-item-label>{{ ($attrs.itemarticle.category)? $attrs.itemarticle.category.name : '' }}</q-item-label>
           <q-item-label caption>{{ ($attrs.itemarticle.group)? $attrs.itemarticle.group.name : '' }}</q-item-label>
         </q-item-section>
       </q-item>

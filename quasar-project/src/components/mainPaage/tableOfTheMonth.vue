@@ -53,12 +53,14 @@ export default defineComponent({
           this.datas_col3 = [];
           let elements = Object.values(r.data).sort((a, b) => b.header.price - a.header.price) as TableFeuilleCategory[];
           console.log(elements);
-          while (elements.length > 3) {
+          while (elements.length >= 3) {
             this.datas_col1.push(elements.shift() as TableFeuilleCategory);
             this.datas_col2.push(elements.shift() as TableFeuilleCategory);
             this.datas_col3.push(elements.shift() as TableFeuilleCategory);
           }
+          if (elements.length) {
           this.datas_col1.push(elements.shift() as TableFeuilleCategory);
+          }
           if (elements.length) {
             this.datas_col2.push(elements.shift() as TableFeuilleCategory);
           }

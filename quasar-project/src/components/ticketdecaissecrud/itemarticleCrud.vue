@@ -17,12 +17,12 @@
       <q-form @submit="onSubmit" @reset="onReset" class="col-6">
         
         <q-card-section>
-          <q-input label="Identifiant article" dense class="col-5" v-model="$attrs.item.ident" disable
+          <q-input label="Identifiant article" dense class="col-5" v-model="$attrs.item.ident"
           >
             <template v-slot:prepend><q-icon name="fingerprint" /></template>
           </q-input>
 
-          <q-input label="EAN13" dense class="col-5" v-model="$attrs.item.ean13" disable
+          <q-input label="EAN13" dense class="col-5" v-model="$attrs.item.ean13"
           >
             <template v-slot:prepend><q-icon name="fingerprint" /></template>
           </q-input>
