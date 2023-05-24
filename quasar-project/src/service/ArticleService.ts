@@ -11,6 +11,13 @@ class ArticleService {
         }
         throw new Error('ident is undefined');
     }
+
+    static getArticleByEan13Gs1(code: string | undefined): Promise<AxiosResponse<Article>> {
+        if (code) {
+            return ArticleApi.getArticleByEan13Gs1(code);
+        }
+        throw new Error('code is undefined');
+    }
 }
 
 export default ArticleService;

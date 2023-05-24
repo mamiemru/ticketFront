@@ -11,6 +11,12 @@ class ArticleApi {
             
         );
     }
+
+    static getArticleByEan13Gs1(code: string): Promise<AxiosResponse<Article>> {
+        return axiosConfig.get<Article>(
+            `/ticket_de_caisse/article/ean13/${code}`,
+        );
+    }
 }
 
 export default ArticleApi;

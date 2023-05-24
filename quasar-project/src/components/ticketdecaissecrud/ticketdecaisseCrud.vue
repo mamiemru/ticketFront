@@ -63,8 +63,10 @@
           <q-btn outline color="green" icon="add_shopping_cart" @click="addNewArticle" label="Ajouter un article manuellement" 
             :disabled="!tdc.shop || !tdc.shop.name"
           />
-          <q-btn outline color="green" icon="tag" @click="addNewArticle" label="Ajouter via EAN13 GS1" disabled />
-          <q-btn outline color="green" icon="add_photo_alternate" @click="addNewArticle" label="Ajouter via la galery" disabled />
+          <q-btn outline color="green" icon="tag" @click="openEAn13Gs1FormDialog" label="Ajouter via EAN13 GS1"
+          />
+          <q-btn outline color="green" icon="add_photo_alternate" @click="addNewArticle" label="Ajouter via la galery" disabled
+          />
         </div>
         <div :key="articlesListKey" class="row q-py-md" v-if="tdc.type != 'recepiece'">
           <article-crud class="col-6" v-for="(article, i) in tdc.articles" :key="i" 
@@ -104,6 +106,7 @@ import QDateTimePicker from '../QDateTimePicker.vue'
 import articleCrudDialogVue from './articleCrudDialog.vue';
 import ShopDialogVue from '../shops/shopDialog.vue'
 import QDiscountView from '../QDiscountView.vue';
+import ArticleService from '../../service/ArticleService';
 
 export default defineComponent({
   name: 'TicketDeCaisseCrud',
@@ -179,6 +182,7 @@ export default defineComponent({
     removeTdcShopId() {
       this.tdc.shop.id = undefined;
     },
+
     updateTotal() {
       let total = 0;
       for (let article of this.tdc.articles) {
@@ -186,22 +190,23 @@ export default defineComponent({
       }
       this.tdc.total = total;
     },
+
     addNewArticle() {
-      this.openArticleCrudDialog(
-        { 
-          item : { 
-            group: {} as TDCGroup, attachement: {} as TDCAttachement, category: {} as TDCCategory, brand : {} as TDCBrand
-          } as ItemArticle 
-        } as Article
-      );
+      let article = { 
+        item : { 
+          group: {} as TDCGroup, attachement: {} as TDCAttachement, category: {} as TDCCategory, brand : {} as TDCBrand
+        } as ItemArticle 
+      } as Article;
+      this.openArticleCrudDialog(article, false);
     },
+
     onEditItem(index : number) {
       let articles = this.tdc.articles as Array<Article>;
       let article = articles.splice(index, 1)[0];
-      console.log(article);
-      this.openArticleCrudDialog(article);
+      this.openArticleCrudDialog(article, true);
     },
-    openArticleCrudDialog(article : Article) {
+
+    openArticleCrudDialog(article : Article, update: boolean) {
       this.q.dialog({
         component: articleCrudDialogVue,
         componentProps: { tdc: this.tdc, articleReadonly: article }
@@ -209,9 +214,38 @@ export default defineComponent({
         this.tdc.articles.push(r);
         this.updateTotal();
       }).onCancel(() => {
+        if (update) {
+          this.tdc.articles.push(article);
+        }
         console.log('Cancel')
-      })
+      });
     },
+
+    openEAn13Gs1FormDialog() {
+      this.q.dialog({
+        title: 'Prompt',
+        message: 'EAN13 ou GS1 du produit',
+        prompt: {
+          model: '',
+          isValid: val => val.length > 6,
+          type: 'text'
+        },
+        cancel: true,
+        persistent: true
+      }).onOk((productCode) => {
+        ArticleService.getArticleByEan13Gs1(productCode)
+        .then((r) => {
+          this.tdc.articles.push(r.data);
+          this.updateTotal();
+        }).catch((r) => {
+          console.log(r);
+          alert(r);
+        })
+      }).onCancel(() => {
+        console.log('Cancel')
+      });
+    },
+
     onDeleteItem(index : number) {
       let articles = this.tdc.articles as Array<Article>;
       articles.splice(index, 1);
@@ -219,6 +253,7 @@ export default defineComponent({
       this.updateTotal();
       this.articlesListKey += 1;
     },
+
     onDeleteTdc() {
       this.q.dialog({
         title: 'Confirmation',
@@ -233,6 +268,7 @@ export default defineComponent({
         .catch((r) => { alert(r); console.log(r); })
       })
     },
+
     onChangedShop(shop_id : number) {
       if (shop_id) {
         let selected_shops = this.shopNameOptions.filter((shop : TDCShop) => shop.id === Number(shop_id));
@@ -255,12 +291,14 @@ export default defineComponent({
         }
       }
     },
+
     onChangedCategorie(categorieName : string) {
       if (this.tdc.category === null) {
         this.tdc.category = {} as TDCCategory;
       }
       this.tdc.category.name = categorieName;
     },
+
     // eslint-disable-next-line
     filterShops (val : string, update : any) {
       update(() => {
@@ -268,6 +306,7 @@ export default defineComponent({
         this.filteredShopNameOptions = this.shopNameOptions.filter(v => v.name.toLocaleLowerCase().indexOf(needle) > -1)
       })
     },
+
     // eslint-disable-next-line
     filterLocalisations (val : string, update : any) {
       update(() => {
@@ -275,12 +314,15 @@ export default defineComponent({
         this.filteredLocalisationNameOptions = this.localisationsNameOptions.filter(v => v.toLocaleLowerCase().indexOf(needle) > -1)
       })
     },
+
     isTdcFIlledIn() {
       return this.tdc.shop && this.tdc.shop.localisation && this.tdc.date && this.tdc.category && this.tdc.articles && this.tdc.articles.length > 0;
     },
+
     leaveTicketDeCaisse() {
       this.$router.push({ path: '/' });
     },
+
     submitTicketDeCaisse () {
       TicketdecaisseService.postTicketDeCaisse(this.tdc)
       .then(() => {
@@ -291,6 +333,7 @@ export default defineComponent({
         alert(r);
       });
     },
+
     onUploadAttachementSubmited(r : TDCAttachement) {
           this.tdc.attachement = r;
     }
