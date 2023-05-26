@@ -31,6 +31,15 @@
             <template v-slot:prepend><q-icon name="badge" /></template>
           </q-input>
 
+          <div class="row justify-between">
+            <q-select label="Marque" dense class="col-10" :options="articleBrandOptions" @input-value="onChangeArticleBrand"
+              :model-value="$attrs.item.brand.name" use-input fill-input input-debounce="0" hide-selected
+            >
+              <template v-slot:prepend><q-icon name="label" /></template>
+            </q-select>
+            <q-btn class="col-2" flat color="blue" icon="add" dense @click="addNewShop" :disabled="$attrs.item.brand && $attrs.item.brand.name"/>
+          </div>
+
           <q-select label="Categorie" dense class="col-5" :options="articleCategoriesOptions" @input-value="onChangedItemArticleCategory"
             :model-value="$attrs.item.category.name" use-input fill-input input-debounce="0" hide-selected
           >
@@ -56,11 +65,13 @@
 import { defineComponent } from 'vue'
 import { useQuasar } from 'quasar'
 
+import BrandDialogVue from '../brands/brandDialog.vue'
 import AttachementForm from '../AttachementForm.vue'
 
-import { ItemArticle, TDCAttachement, TDCCategory, TDCGroup } from '../../models/models';
+import { ItemArticle, TDCAttachement, TDCBrand, TDCCategory, TDCGroup } from '../../models/models';
 import ItemArticleCategoryService from '../../service/ItemArticleCategoryService';
 import ItemArticleGroupService from '../../service/ItemArticleGroupService';
+import ItemArticleBrandService from '../../service/ItemArticleBrandService';
 
 export default defineComponent({
   name: 'ItemArticleCrud',
@@ -74,29 +85,32 @@ export default defineComponent({
     if (!item.group) {
       item.group = { name: ''} as TDCGroup;
     }
+    if (!item.brand) {
+      item.brand = {} as TDCBrand;
+    }
     return { q }
   },
   data () {
     return {
       articleCategoriesOptions: [] as string[],
-      articleGroupOptions: [] as string[]
+      articleGroupOptions: [] as string[],
+      articleBrandOptions: [] as string[]
     }
   },
   mounted() {
     let item = this.$attrs.item as ItemArticle;
-    if (!item.category) {
-      item.category = {name: ''} as TDCCategory;
-    }
-    if (!item.group) {
-      item.group = { name: ''} as TDCGroup;
-    }
+
     if (!item.name) {
       item.name = item.ident.toUpperCase();
     }
+
     ItemArticleCategoryService.getCategories()
     .then((r) => { this.articleCategoriesOptions = r.data.map((c) => c.name); }).catch((r) => { console.log(r); })
     ItemArticleGroupService.getGroups()
     .then((r) => { this.articleGroupOptions = r.data.map((g) => g.name); }).catch((r) => { console.log(r); })
+    ItemArticleBrandService.getBrands()
+    .then((r) => { this.articleBrandOptions = r.data.map((g) => g.name); }).catch((r) => { console.log(r); })
+
   },
   methods: {
     onSubmit () {
@@ -129,9 +143,27 @@ export default defineComponent({
         let item = this.$attrs.item as ItemArticle;
         item.group = {name: group} as TDCGroup;
     },
+    onChangeArticleBrand(brand: string) {
+      let item = this.$attrs.item as ItemArticle;
+      item.brand = {name: brand} as TDCBrand;
+    },
     onUploadItemAttachementSubmited(r : TDCAttachement) {
       let item = this.$attrs.item as ItemArticle;
       item.attachement = r;
+    },
+    addNewShop() {
+      let item = this.$attrs.item as ItemArticle;
+      this.q.dialog({
+        component: BrandDialogVue, 
+        componentProps: { readOnly: item.brand, introduction_text: '' }
+      }).onOk((r) => {
+        ItemArticleBrandService.postBrand(r)
+        .then((r) => { item.brand = r.data; this.articleBrandOptions.push(r.data.name); })
+        .catch((r) => { console.log(r); alert(r); })
+      }).onCancel(() => {
+        item.brand = {} as TDCBrand;
+        console.log('Cancel')
+      })
     }
   }
 })

@@ -5,35 +5,47 @@
       <div class="text-h6">Editer une enseigne</div>
     </q-card-section>
 
-    <q-card-section horizontal clas="row">
-      <q-form @submit="onSubmit" @reset="onReset" class="col-6">
-        <q-card-section>
-          <q-input label="Identifiant unique" dense class="col-5" v-model="$attrs.shop.ident"
-          >
-            <template v-slot:prepend><q-icon name="fingerprint" /></template>
-          </q-input>
+    <q-card-section>
+      <q-form @submit="onSubmit" @reset="onReset">
+        <div class="row">
+          <q-card-section class="col-6">
+            <q-input label="Identifiant unique" dense class="col-5" v-model="$attrs.shop.ident"
+            >
+              <template v-slot:prepend><q-icon name="fingerprint" /></template>
+            </q-input>
 
-          <q-input v-model="$attrs.shop.name" label="Nom" dense >
-            <template v-slot:prepend><q-icon name="badge" /></template>
-          </q-input>          
-          
-          <q-input v-model="$attrs.shop.city" label="Ville" dense >
-            <template v-slot:prepend><q-icon name="label" /></template>
-          </q-input>   
-          
-          <q-input v-model="$attrs.shop.postal_code" label="Postal Code" dense type="number" mask="#####" fill-mask="0" >
-            <template v-slot:prepend><q-icon name="label" /></template>
-          </q-input>
+            <q-input v-model="$attrs.shop.name" label="Nom" dense >
+              <template v-slot:prepend><q-icon name="badge" /></template>
+            </q-input>          
+            
+            <q-input v-model="$attrs.shop.city" label="Ville" dense >
+              <template v-slot:prepend><q-icon name="label" /></template>
+            </q-input>   
+            
+            <q-input v-model="$attrs.shop.postal_code" label="Postal Code" dense type="number" mask="#####" fill-mask="0" >
+              <template v-slot:prepend><q-icon name="label" /></template>
+            </q-input>
 
-          <q-input v-model="$attrs.shop.localisation" label="Localisation" dense >
-            <template v-slot:prepend><q-icon name="label" /></template>
-          </q-input>
-
-        </q-card-section>
-        <q-card-actions align="right" class="bg-white text-teal">
+            <q-input v-model="$attrs.shop.localisation" label="Localisation" dense >
+              <template v-slot:prepend><q-icon name="label" /></template>
+            </q-input>
+          </q-card-section>
+          <q-card-section class="col-6 justify-center">
+            <q-select label="Groupe d'enseigne" dense
+              :options="filteredShopEnseigneNameOptions"
+              :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
+              :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : ''"
+              v-model="$attrs.shop.enseigne"
+            >
+              <template v-slot:prepend><q-icon name="store" /></template>
+            </q-select>
+            <q-img v-if="$attrs.shop.enseigne" :src="$attrs.shop.enseigne.icon" style="max-height: 200px;" fit="scale-down" />
+          </q-card-section>
+        </div>
+        <div align="right" class="bg-white text-teal">
           <q-btn flat label="OK" color="blue" type="submit" />
           <q-btn flat label="Cancel" color="red" type="reset" />
-        </q-card-actions>
+        </div>
       </q-form>
     </q-card-section>
   </q-card>
@@ -43,7 +55,8 @@
 import { defineComponent } from 'vue'
 import { useQuasar } from 'quasar'
 
-import { TDCShop } from '../../models/models';
+import { TDCEnseigne, TDCShop } from '../../models/models';
+import TDCShopEnseigneService from '../../service/TDCShopEnseigneService'
 
 export default defineComponent({
   name: 'ItemArticleCrud',
@@ -54,9 +67,19 @@ export default defineComponent({
       required: false
     }
   },
+  data () {
+    return {
+        filteredShopEnseigneNameOptions: [] as TDCEnseigne[]
+    }
+  },
   setup() {
     const q = useQuasar()
-    return { q }
+    return { q };
+  },
+  mounted() {
+    TDCShopEnseigneService.getShopEnseignes()
+    .then((r) => this.filteredShopEnseigneNameOptions = r.data)
+    .catch((r) => { console.log(r); alert(r); });
   },
   methods: {
     onSubmit () {

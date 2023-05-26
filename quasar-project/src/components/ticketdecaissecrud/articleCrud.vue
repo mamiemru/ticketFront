@@ -30,8 +30,6 @@
             <template v-slot:prepend><q-icon name="badge" /></template>
           </q-input>
 
-          {{ $attrs.article.item.brand }}
-
           <div class="row justify-between">
             <q-select label="Marque" dense class="col-10" :options="articleBrandOptions" @input-value="onChangeArticleBrand"
               :model-value="$attrs.article.item.brand.name" use-input fill-input input-debounce="0" hide-selected

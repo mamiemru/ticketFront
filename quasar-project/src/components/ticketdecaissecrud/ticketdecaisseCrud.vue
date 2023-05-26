@@ -9,11 +9,17 @@
     </div>
     <div class="row items-start justify-around q-py-md" style="width: 100%;">
       <div class="col-7 column justify-between">
-        <div class="row justify-between">
-          <div class="col-2 justify-center">
+
+        <!-- tdc or recepiece infos -->
+        <q-card class="row justify-between" flat bordered>
+
+          <!-- enseigne logo -->
+          <q-card-section class="col-2 justify-center">
             <q-img v-if="tdc.shop.enseigne" :src="tdc.shop.enseigne.icon" style="max-height: 290px;" fit="scale-down" />
-          </div>
-          <div class="col-4">
+          </q-card-section>
+
+          <!-- shop name and localisation -->
+          <q-card-section class="col-4">
             <q-select label="Shop" dense class="col-6" @update:model-value="onChangedShop" :disable="!$attrs.canEdit"
               :options="filteredShopNameOptions" emit-value map-options @filter="filterShops"
               :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
@@ -22,6 +28,7 @@
             >
                 <template v-slot:prepend><q-icon name="store" /></template>
             </q-select>
+
             <div class="row">
               <q-input label="Adresse" dense class="col-6" :key="tdcKey" :disable="!$attrs.canEdit"
                 v-model="tdc.shop.localisation" @change="removeTdcShopId"
@@ -37,8 +44,11 @@
               >
               </q-input>
             </div>
-          </div>
-          <div class="col-3">
+
+          </q-card-section>
+
+          <!-- date and category -->
+          <q-card-section class="col-4">
             <q-date-time-picker :tdc="tdc" class="col-4" :canEdit="$attrs.canEdit"
             />
             <q-select label="Catégorie" dense class="col-4" @input-value="onChangedCategorie" :key="tdcKey"
@@ -49,16 +59,19 @@
             >
                 <template v-slot:prepend><q-icon name="category" /></template>
             </q-select>
-          </div>
-          <div class="col-2">
+          </q-card-section>
+          
+          <!-- total, remise, %tage -->
+          <q-card-section class="col-2">
               <q-input v-model="tdc.total" label="Total" :dense="true" disable class="col-5"
               >
                 <template v-slot:prepend><q-icon name="euro_symbol" /></template>
               </q-input>
             <q-discount-view :total="tdc.total" :remise_object="tdc" :canEdit="$attrs.canEdit" />
-          </div>
-        </div>
+          </q-card-section>
+        </q-card>
 
+        <!-- add articles btns -->
         <div class="row justify-around q-py-md" v-if="$attrs.canEdit">
           <q-btn outline color="green" icon="add_shopping_cart" @click="addNewArticle" label="Ajouter un article manuellement" 
             :disabled="!tdc.shop || !tdc.shop.name"
@@ -68,6 +81,8 @@
           <q-btn outline color="green" icon="add_photo_alternate" @click="addNewArticle" label="Ajouter via la galery" disabled
           />
         </div>
+
+        <!-- articles -->
         <div :key="articlesListKey" class="row q-py-md" v-if="tdc.type != 'recepiece'">
           <article-crud class="col-6" v-for="(article, i) in tdc.articles" :key="i" 
               :canCreate="false" :canEdit="$attrs.canEdit" :canDelete="true"
@@ -75,12 +90,15 @@
               :shop="tdc.shop" :article="article"
           />
         </div>
+
       </div>
       <q-card class="my-card col-4" flat bordered v-if="tdc.attachement && tdc.attachement.image">
         <q-img :src="tdc.attachement.image" />
       </q-card>
       <q-card class="my-card col-4" flat bordered v-else-if="$attrs.canEdit">
         <attachement-form @submited="onUploadAttachementSubmited" @error="null" category="ticket" type="ticket" />
+      </q-card>
+      <q-card class="my-card col-4" flat v-else>
       </q-card>
     </div>
     <pre>{{ tdc }}</pre>

@@ -80,6 +80,7 @@ export interface TicketDeCaisseHeaderResponse {
   category: TDCCategory;
   total: number;
   type: string;
+  remise: number;
 }
 
 export interface TDCAttachement {

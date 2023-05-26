@@ -1,13 +1,14 @@
 <template>
-  <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
-    <div>
-      <div style="font-size: 5vh">
-        Veuillez vous authentifier.
+  <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center row">
+    <div class="col-4">
+      <div style="font-size: 5vh" class="q-mt-xl" >
+        veuillez vous authentifier.
       </div>
 
-      <div class="text-h2" style="opacity:.8">
-        <q-input v-model="apiKey" color="white" label="Your APIKey" flat >
+      <div class="text-h2" style="opacity:.8" >
+        <q-input v-model="apiKey" color="white" label="Your APIKey" flat :error="isErrorous" >
             <template v-slot:prepend><q-icon name="key" color="white" /></template>
+            <template v-slot:error>Please entrer a valid api key</template>
         </q-input>
       </div>
 
@@ -33,7 +34,8 @@ export default defineComponent({
   name: 'ErrorForbiden',
   data() {
     return {
-      apiKey: '' as string
+      apiKey: '' as string,
+      isErrorous: false
     }
   },
   setup() { 
@@ -53,7 +55,7 @@ export default defineComponent({
       window.sessionStorage.setItem(this.APIKEY, this.apiKey);
       ApiKeyApi.check()
       .then(() => { this.$router.push({ path: '/' }); })
-      .catch(() => { alert('wrong'); })
+      .catch(() => { this.isErrorous = true; })
     }
   }
 });

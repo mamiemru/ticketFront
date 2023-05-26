@@ -12,7 +12,8 @@ export default defineComponent({
   props: {
     response: {
       type: Object,
-      required: true
+      required: false,
+      default: () => { status: 403 }
     }
   },
   data() {
@@ -21,13 +22,18 @@ export default defineComponent({
   emits: [ 'ok', 'hide' ],
   methods: {
     show () {
-      switch (this.response.status) {
-        case 403:
-          this.$router.push({ path: '/login' });
-          break;
-        default:
-          let dialog = this.$refs.dialog as HTMLFormElement;
-          dialog.show();
+      console.log(this.response)
+      if (this.response) {
+        switch (this.response.status) {
+          case 403:
+            this.$router.push({ path: '/login' });
+            break;
+          default:
+            let dialog = this.$refs.dialog as HTMLFormElement;
+            dialog.show();
+        }
+      } else {
+        this.$router.push({ path: '/login' });
       }
     },
 

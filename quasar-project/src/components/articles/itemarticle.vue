@@ -1,29 +1,48 @@
 <template>
   <q-card class="my-card" bordered square flat dense>
-    <q-card-section class="row justify-center">
-      <img :src="$attrs.itemarticle.attachement.image" v-if="$attrs.itemarticle.attachement && $attrs.itemarticle.attachement.image" class="col-5">
-      <q-btn flat round color="blue" icon="edit" @click="openItemArticleCrudDialog" />
+
+    <q-card-action dense class="row justify-between items-center">
+      <q-list class="q-pt-xs q-pl-md">
+        <q-item-label caption>{{ $attrs.itemarticle.name }} #<small caption>{{ $attrs.itemarticle.id }}</small></q-item-label>
+      </q-list>
+      <q-list horizontal>
+        <q-btn flat round color="blue" icon="edit" @click="openItemArticleCrudDialog" />
+        <q-btn flat round color="red" icon="delete" disabled />
+      </q-list>
+    </q-card-action>
+
+    <q-separator />
+
+    <q-card-section horizontal>
+      
+      <q-card-section class="col-4 flex flex-center" style="padding: 10px">
+        <img v-if="$attrs.itemarticle.attachement && $attrs.itemarticle.attachement.image"
+          :src="$attrs.itemarticle.attachement.image"
+          style="width: 100%" class="rounded-borders"
+        >
+      </q-card-section>
+
+      <q-card-section class="q-pt-xs">
+        <q-list class="q-pt-xs">
+          <q-item clickable @click="onIdentClicked" dense>
+            <q-item-section>
+              <q-item-label v-if="$attrs.itemarticle.brand">{{ $attrs.itemarticle.brand.name }}</q-item-label>
+              <q-item-label caption>{{ $attrs.itemarticle.ident }}</q-item-label>
+              <q-item-label caption><small># {{ $attrs.itemarticle.ean13 }}</small></q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item dense>
+            <q-item-section>
+              <q-item-label>{{ ($attrs.itemarticle.category)? $attrs.itemarticle.category.name : '' }}</q-item-label>
+              <q-item-label caption>{{ ($attrs.itemarticle.group)? $attrs.itemarticle.group.name : '' }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-card-section>
+
     </q-card-section>
 
-    <q-list>
-      <q-item clickable @click="onIdentClicked" dense>
-        <q-item-section avatar><q-icon color="primary" /></q-item-section>
-        <q-item-section>
-          <q-item-label v-if="$attrs.itemarticle.brand">{{ $attrs.itemarticle.brand.name }}</q-item-label>
-          <q-item-label>{{ $attrs.itemarticle.name }}</q-item-label>
-          <q-item-label caption>{{ $attrs.itemarticle.ident }}</q-item-label>
-          <q-item-label caption><small># {{ $attrs.itemarticle.ean13 }}</small></q-item-label>
-        </q-item-section>
-      </q-item>
-
-      <q-item dense>
-        <q-item-section avatar><q-icon color="red" /></q-item-section>
-        <q-item-section>
-          <q-item-label>{{ ($attrs.itemarticle.category)? $attrs.itemarticle.category.name : '' }}</q-item-label>
-          <q-item-label caption>{{ ($attrs.itemarticle.group)? $attrs.itemarticle.group.name : '' }}</q-item-label>
-        </q-item-section>
-      </q-item>
-    </q-list>
   </q-card>
 </template>
 

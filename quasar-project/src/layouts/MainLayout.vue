@@ -49,6 +49,9 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import { useQuasar } from 'quasar'
+
+import axiosErrorLayoutVue from '../layouts/axiosErrorLayout.vue';
 import EssentialLink from '../components/EssentialLink.vue';
 
 const linksList = [
@@ -115,15 +118,31 @@ export default defineComponent({
   components: {
     EssentialLink
   },
+  data() {
+    return {
+    }
+  },
   setup () {
+    const q = useQuasar();
     const leftDrawerOpen = ref(false)
 
     return {
-      essentialLinks: linksList,
+      q,
       leftDrawerOpen,
+      APIKEY: 'Api-Key',
+      essentialLinks: linksList,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
       }
+    }
+  },
+  mounted () {
+    let apiKey = window.sessionStorage.getItem(this.APIKEY);
+    if (!apiKey) {
+      this.q.dialog({
+        component: axiosErrorLayoutVue,
+        componentProps: {}
+      })
     }
   }
 });

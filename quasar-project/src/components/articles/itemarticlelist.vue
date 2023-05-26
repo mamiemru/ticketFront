@@ -22,7 +22,7 @@
       <q-btn class="col-2" flat color="red" icon="navigate_next" label="à la fin" @click="onGoLastPage" :disabled="!datas.next" />
     </div>
     <div class="row justify-start">
-      <itemarticle class="col-2" v-for="(itemarticle, i) in datas.results" :key="i" :itemarticle="itemarticle"/>
+      <itemarticle class="col-3" v-for="(itemarticle, i) in datas.results" :key="i" :itemarticle="itemarticle"/>
     </div>
   </div>
 </template>
