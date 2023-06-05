@@ -9,7 +9,7 @@ export interface Meta {
 }
 
 export interface Ref<T> {
-  value: T
+  value: T;
 }
 
 export interface TDCEnseigne {
@@ -176,6 +176,12 @@ export interface TicketDeCaisse {
   total: number;
   type: string;
   remise: number;
+  need_to_be_validated: boolean;
+}
+
+export interface UnvalidatedTicketDeCaisse {
+  id: string;
+  field: TicketDeCaisse
 }
 
 export interface ItemArticlePagination {

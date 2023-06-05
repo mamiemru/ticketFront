@@ -50,7 +50,18 @@ export default defineComponent({
     return { q }
   },
   mounted() {
-    this.getDatas()
+    FeuilleService.getYearMonth()
+    .then((r) => {
+        this.datas = r.data.reverse();
+        this.selectedIndex = this.datas.length-1;
+        this.changeYearMonth()
+    })
+    .catch((error) => {
+      this.q.dialog({
+        component: axiosErrorLayoutVue,
+        componentProps: { response: error.response }
+      })
+    })
   },
   methods: {
     pmonth() {
@@ -67,25 +78,6 @@ export default defineComponent({
       let date = new Date(this.datas[this.selectedIndex].date * 1000);
       let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       this.feuille_date = `${date.getFullYear()} ${months[date.getMonth()]}`;
-    },
-    getDatas() {
-      FeuilleService.getYearMonth()
-      .then((r) => {
-          console.log(r); 
-          this.datas = r.data.reverse();
-          this.selectedIndex = this.datas.length-1;
-          this.changeYearMonth()
-      })
-      .catch((error) => {
-        this.q.dialog({
-          component: axiosErrorLayoutVue,
-          componentProps: { response: error.response }
-        }).onOk((r) => {
-          console.log(r);
-        }).onCancel(() => {
-          console.log('Cancel');
-        })
-      })
     }
   }
 });

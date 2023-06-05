@@ -21,7 +21,7 @@
             <div class="row items-center justify-around" style="height: 70%">  
               <div class="col-3 q-gutter-y-md column">
                 <q-btn color="black" class="full-width" label="Ticket de caisse" icon="receipt_long"
-                  @click="() => { docType='tdc'; step = 2; $refs.stepper.next(); updateStepper++ }" 
+                  @click="() => { docType='ticket'; step = 2; $refs.stepper.next(); updateStepper++ }" 
                 />
               </div>
               <div class="col-3 q-gutter-y-md column">

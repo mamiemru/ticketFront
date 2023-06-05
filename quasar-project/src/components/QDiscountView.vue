@@ -1,10 +1,10 @@
 <template>
   <div class="row">
-    <q-input v-model="$attrs.remise_object.remise" label="Remise" dense class="col-6"
+    <q-input v-model="$attrs.remise_object.remise" label="Remise" dense class="col-5"
       @change="changePourcentage" :disable="!$attrs.canEdit" 
     >
     </q-input>
-    <q-input v-model="percentage" label="soit" dense class="col-6" type="number" 
+    <q-input v-model="percentage" label="soit" dense class="col-7" type="number" 
       @change="changeDiscount" :disable="!$attrs.canEdit"
     >
       <template v-slot:append><q-icon name="percent" /></template>

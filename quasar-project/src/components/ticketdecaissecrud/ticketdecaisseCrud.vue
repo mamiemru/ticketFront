@@ -1,5 +1,6 @@
 <template>
   <div class="q-py-md" style="width: 100%;">
+    {{ tdc.need_to_be_validated }}
     <div class="row justify-between q-py-md" v-if="$attrs.canEdit">
       <q-btn class="col-4" flat color="green" icon="save" @click="submitTicketDeCaisse" label="Sauver et Envoyer" :disabled="!isTdcFIlledIn()" />
       <q-btn class="col-4" flat color="red" icon="delete" label="Abandonner" @click="leaveTicketDeCaisse" />
@@ -20,14 +21,18 @@
 
           <!-- shop name and localisation -->
           <q-card-section class="col-4">
-            <q-select label="Shop" dense class="col-6" @update:model-value="onChangedShop" :disable="!$attrs.canEdit"
-              :options="filteredShopNameOptions" emit-value map-options @filter="filterShops"
-              :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
-              :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : ''"
-              v-model="tdc.shop" use-input fill-input input-debounce="0" hide-selected
-            >
-                <template v-slot:prepend><q-icon name="store" /></template>
-            </q-select>
+
+            <div class="row col-6 jistify-between">
+              <q-select class="col-10" label="Shop" dense  @update:model-value="onChangedShop" :disable="!$attrs.canEdit"
+                :options="filteredShopNameOptions" emit-value map-options @filter="filterShops"
+                :option-value="opt => Object(opt) === opt && 'id' in opt ? opt.id : null"
+                :option-label="opt => Object(opt) === opt && 'name' in opt ? opt.name : ''"
+                v-model="tdc.shop" use-input fill-input input-debounce="0" hide-selected
+              >
+                  <template v-slot:prepend><q-icon name="store" /></template>
+              </q-select>
+              <q-btn class="col-1" flat color="green" icon="add" @click="addNewShopForm('')" />
+            </div>
 
             <div class="row">
               <q-input label="Adresse" dense class="col-6" :key="tdcKey" :disable="!$attrs.canEdit"
@@ -63,7 +68,7 @@
           
           <!-- total, remise, %tage -->
           <q-card-section class="col-2">
-              <q-input v-model="tdc.total" label="Total" :dense="true" disable class="col-5"
+              <q-input v-model="tdc.total" label="Total" :dense="true" :disable="tdc.type !== 'recepiece'" class="col-5"
               >
                 <template v-slot:prepend><q-icon name="euro_symbol" /></template>
               </q-input>
@@ -96,7 +101,7 @@
         <q-img :src="tdc.attachement.image" />
       </q-card>
       <q-card class="my-card col-4" flat bordered v-else-if="$attrs.canEdit">
-        <attachement-form @submited="onUploadAttachementSubmited" @error="null" category="ticket" type="ticket" />
+        <attachement-form @submited="onUploadAttachementSubmited" @error="null" category="ticket" type="tdc" />
       </q-card>
       <q-card class="my-card col-4" flat v-else>
       </q-card>
@@ -117,6 +122,7 @@ import TDCShopService from '../../service/TDCShopService'
 import CompletionService from '../../service/CompletionService'
 import TDCCategoryService from '../../service/TDCCategoryService'
 import TicketdecaisseService from '../../service/TicketdecaisseService'
+import ArticleService from '../../service/ArticleService';
 
 import AttachementForm from '../AttachementForm.vue'
 import ArticleCrud from './articleCrud.vue'
@@ -124,7 +130,6 @@ import QDateTimePicker from '../QDateTimePicker.vue'
 import articleCrudDialogVue from './articleCrudDialog.vue';
 import ShopDialogVue from '../shops/shopDialog.vue'
 import QDiscountView from '../QDiscountView.vue';
-import ArticleService from '../../service/ArticleService';
 
 export default defineComponent({
   name: 'TicketDeCaisseCrud',
@@ -186,17 +191,23 @@ export default defineComponent({
     }
 
     if (this.tdc.shop && this.tdc.shop.valide === false) {
-      this.q.dialog({
-        component: ShopDialogVue,
-        componentProps: { shopReadOnly: this.tdc.shop, introduction_text: 'Nous avons pas trouvé l\'enseigne dans notre base' }
-      }).onOk((r) => {
-        this.tdc.shop = Object.assign(this.tdc.shop, r);
-      }).onCancel(() => {
-        console.log('Cancel')
-      })
+      this.addNewShopForm('Nous avons pas trouvé l\'enseigne dans notre base');
     }
   },
   methods: {
+    addNewShopForm(introduction_text: string) {
+      this.q.dialog({
+        component: ShopDialogVue,
+        componentProps: { shopReadOnly: this.tdc.shop, introduction_text: introduction_text }
+      }).onOk((r) => {
+        this.tdc.shop = Object.assign(this.tdc.shop, r);
+        this.tdc.shop.id = undefined;
+        this.tdc.shop.valide = true;
+      }).onCancel(() => {
+        console.log('Cancel')
+      })
+    },
+
     removeTdcShopId() {
       this.tdc.shop.id = undefined;
     },
@@ -334,7 +345,14 @@ export default defineComponent({
     },
 
     isTdcFIlledIn() {
-      return this.tdc.shop && this.tdc.shop.localisation && this.tdc.date && this.tdc.category && this.tdc.articles && this.tdc.articles.length > 0;
+      if (this.tdc.shop && this.tdc.shop.localisation && this.tdc.date && this.tdc.category) {
+        if (this.tdc.type === 'recepiece') {
+          return this.tdc.total > 0;
+        } else {
+          return this.tdc.articles && this.tdc.articles.length > 0;
+        }
+      }
+      return false;
     },
 
     leaveTicketDeCaisse() {
@@ -344,7 +362,7 @@ export default defineComponent({
     submitTicketDeCaisse () {
       TicketdecaisseService.postTicketDeCaisse(this.tdc)
       .then(() => {
-        alert('ok TODO')
+        alert('ok')
       })
       .catch((r) => {
         console.log(r);
