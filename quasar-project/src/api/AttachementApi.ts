@@ -3,7 +3,7 @@ import { AxiosResponse } from 'axios';
 import { TicketDeCaisse } from '../models/models';
 import axiosConfig from '../api/axiosConfig';
 
-class MLApi {
+class AttachementApi {
 
     static uploadAttachment(formData : FormData): Promise<AxiosResponse<TicketDeCaisse>> {
         return axiosConfig.post<TicketDeCaisse>(
@@ -19,4 +19,4 @@ class MLApi {
     }
 }
 
-export default MLApi;
+export default AttachementApi;

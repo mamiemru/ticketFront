@@ -8,7 +8,7 @@
         <q-item @click="goToTdc(ticket)" clickable v-ripple v-for="ticket in datas" :key="ticket.id">
             <q-item-section >
                 <q-item-label class="row justify-between">
-                  <small>{{ ticket.shop.name }} - {{ ticket.shop.city }}</small>
+                  <small>{{ getParsedShopAndLocalisation(ticket) }}</small>
                   <small>{{ ticket.total }}€</small>
                 </q-item-label>
                 <q-item-label caption class="row justify-between">
@@ -25,7 +25,7 @@
 import { defineComponent } from 'vue';
 import { useQuasar } from 'quasar'
 
-import { TicketDeCaisseHeaderResponse } from '../../models/models';
+import { TicketDeCaisse, TicketDeCaisseHeaderResponse } from '../../models/models';
 
 import axiosErrorLayoutVue from '../../layouts/axiosErrorLayout.vue';
 
@@ -57,6 +57,14 @@ export default defineComponent({
   methods: {
     goToTdc(tdc: TicketDeCaisseHeaderResponse) {
       this.$router.push({ path: '/tdc/' + tdc.id, params: { tdcId: tdc.id } });
+    },
+
+    getParsedShopAndLocalisation(ticket: TicketDeCaisse) {
+      let str = `${ticket.shop.name} - ${ticket.shop.city}`;
+      if (str.length < 42) {
+        return str;
+      }
+      return `${str.slice(0, 38)}...`;
     }
   }
 });

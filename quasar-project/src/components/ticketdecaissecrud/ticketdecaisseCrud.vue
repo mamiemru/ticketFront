@@ -101,7 +101,7 @@
         <q-img :src="tdc.attachement.image" />
       </q-card>
       <q-card class="my-card col-4" flat bordered v-else-if="$attrs.canEdit">
-        <attachement-form @submited="onUploadAttachementSubmited" @error="null" category="ticket" type="tdc" />
+        <attachement-form @submited="onUploadAttachementSubmited" @error="null" category="ticket" type="ticket" />
       </q-card>
       <q-card class="my-card col-4" flat v-else>
       </q-card>

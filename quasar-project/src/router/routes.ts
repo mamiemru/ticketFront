@@ -11,6 +11,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'shops', component: () => import('pages/Shops.vue') },
       { path: 'categories', component: () => import('pages/Categories.vue') },
       { path: 'articles/:ident', component: () => import('pages/Showperarticle.vue'), name: 'display_articles_with_ident' },
+      { path: 'ml', component: () => import('pages/MlPage.vue') },
       { path: '', component: () => import('pages/IndexPage.vue') }
     ]
   },

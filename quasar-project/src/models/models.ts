@@ -85,6 +85,7 @@ export interface TicketDeCaisseHeaderResponse {
 
 export interface TDCAttachement {
   category: string;
+  type: string;
   id: number;
   image: string;
   name: string;
@@ -299,4 +300,21 @@ export class AArticle implements Article {
 export interface RemiseInterface {
   remise: number;
   total: number;
+}
+
+export interface MlAttachementTicket {
+  id: number;
+  attachement: TDCAttachement;
+  gcp_datas: object;
+  json_datas: object;
+  valide: boolean;
+  tdc: TicketDeCaisseHeaderResponse;
+}
+
+export interface MlAttachementTicketPagginationResult {
+  count: number;
+  next: string;
+  previous: string;
+  results: MlAttachementTicket[];
+
 }

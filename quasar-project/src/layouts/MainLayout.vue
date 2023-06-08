@@ -91,6 +91,13 @@ const linksList = [
     source: 'internal'
   },  
   {
+    title: 'Machine Learning',
+    caption: 'quasar.dev',
+    icon: 'smart_toy',
+    link: '/#/ml/',
+    source: 'internal'
+  },  
+  {
     title: 'Docs',
     caption: 'quasar.dev',
     icon: 'school',
