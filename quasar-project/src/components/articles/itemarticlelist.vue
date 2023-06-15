@@ -51,22 +51,26 @@ export default defineComponent({
     .then((r) => {this.datas = r.data; })
   },
   methods: {
+    
     onGoStartPage() {
       ItemArticleService.getItemArticlePagination(null)
         .then((r) => { this.datas = r.data; this.page = 1; })
     },
+
     onPreviousPage() {
       if (this.datas.previous) {
         ItemArticleService.getItemArticlePagination(this.datas.previous)
         .then((r) => { this.datas = r.data; --this.page; })
       }
     },
+
     onNextPage() {
       if (this.datas.next) {
         ItemArticleService.getItemArticlePagination(this.datas.next)
         .then((r) => { this.datas = r.data; ++this.page; })
       }
     },
+
     onGoLastPage() {
       if (this.datas) {
         ItemArticleService.getItemArticlePaginationPerPage('last')
@@ -77,6 +81,7 @@ export default defineComponent({
         })
       }
     },
+
     filterByArticle() {
       ItemArticleService.postfilterItemArticle(this.article_filter)
         .then((r) => { console.log(r.data); this.datas = r.data; this.page = 1; });

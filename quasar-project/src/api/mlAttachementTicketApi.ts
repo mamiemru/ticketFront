@@ -11,6 +11,12 @@ class MlAttachementTicketApi {
         );
     }
 
+    static paggination_from_page_url(page: string | null): Promise<AxiosResponse<MlAttachementTicketPagginationResult>> {
+        return axiosConfig.get<MlAttachementTicketPagginationResult>(
+            `ml/attachement/ticket/?page=${page}`
+        );
+    }
+
     static list(): Promise<AxiosResponse<MlAttachementTicketPagginationResult>> {
         return axiosConfig.get<MlAttachementTicketPagginationResult>(
             'ml/attachement/ticket/',

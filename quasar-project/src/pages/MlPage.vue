@@ -2,11 +2,11 @@
   <q-page class="row items-start justify-between">
     <div class="col-3 justify-between" v-if="!is_loaded" >
       <div class="row justify-between item-center">
-        <q-btn class="col-auto" flat color="red" icon="chevron_left" label="0" @click="null" disabled />
+        <q-btn class="col-auto" flat color="red" icon="chevron_left" label="0" @click="onGoStartPage" :disabled="!datas.previous" />
         <q-btn class="col-auto" flat color="primary" icon="chevron_left" label="-1" @click="onPreviousPage" :disabled="!datas.previous" />
-        <p caption>page: {{ page }}</p>
+        <p class="text-subtitle2 vertical-middle" >page: {{ page }}</p>
         <q-btn class="col-auto" flat color="primary" icon="navigate_next" label="+1" @click="onNextPage" :disabled="!datas.next" />
-        <q-btn class="col-auto" flat color="red" icon="navigate_next" label="-1" @click="null" disabled />
+        <q-btn class="col-auto" flat color="red" icon="navigate_next" label="-1" @click="onGoLastPage" :disabled="!datas.next" />
       </div>
       <q-list bordered separator>
         <q-item v-for="mla in datas.results" :key="mla.id" clickable @click="retrieveDataRow(mla)" >
@@ -25,9 +25,10 @@
     </div>
     <div class="col-9">
       <div class="row justify-between q-pa-md">
-        <q-btn class="col-4" flat color="green" icon="save" @click="saveMlAttachementTicket" label="Sauver et Envoyer" :disabled="!data.id" />
-        <q-checkbox class="col-2" flat color="green" label="is now valide" v-model="data.valide" :disabled="!data.id || data.valide"/>
-        <q-btn class="col-4" flat color="red" icon="delete" label="Abandonner" @click="data = {}" :disabled="!data.id" />
+        <q-btn class="col-" flat color="green" icon="save" @click="saveMlAttachementTicket" label="Sauver et Envoyer" :disabled="!data.id" />
+        <q-checkbox class="col-2" flat color="green" label="les labels sont validés" v-model="data.valide" :disabled="!data.id || data.valide"/>
+        <q-btn class="col-3" flat color="warning" icon="delete" label="Abandonner" @click="data = {}" :disabled="!data.id" />
+        <q-btn class="col-3" flat color="red" icon="delete" label="Supprimer" @click="deleteMlAttachementTicket" :disabled="!data.id" />
       </div>
       <div class="row justify-between" v-if="data.id">
         <div class="q-px-md col-6">
@@ -36,8 +37,8 @@
           </q-toolbar>
           <q-toolbar class="bg-primary text-white shadow-2">
             <q-toolbar-title class="row justify-between" >
-              <q-btn outline @click="generateNerFromGcpDatas(false)">Generate NER from datas</q-btn>
-              <q-btn outline color="orange" @click="generateNerFromGcpDatas(true)">Force Generate NER from image</q-btn>
+              <q-btn outline @click="generateNerFromGcpDatas(false)">Créer le NER via les données</q-btn>
+              <q-btn outline color="orange" @click="generateNerFromGcpDatas(true)">Créer le NER via l'image</q-btn>
             </q-toolbar-title>
           </q-toolbar>
           <q-list bordered dense separator v-if="is_loaded_ner">
@@ -108,6 +109,11 @@ export default defineComponent({
 
   methods: {
 
+    onGoStartPage() {
+      MlAttachementTicketService.list_per_page('1')
+        .then((r) => { this.datas = r.data; this.page = 1; })
+    },
+
     onPreviousPage() {
       if (this.datas.previous) {
         MlAttachementTicketService.list(this.datas.previous)
@@ -118,6 +124,18 @@ export default defineComponent({
       if (this.datas.next) {
         MlAttachementTicketService.list(this.datas.next)
         .then((r) => { this.datas = r.data; ++this.page; })
+      }
+    },
+
+    onGoLastPage() {
+      if (this.datas) {
+        MlAttachementTicketService.list_per_page('last')
+          .then((r) => {
+            this.datas = r.data
+            if (r.data.previous) {
+              this.page = parseInt(r.data.previous.split('=')[1])+1;
+            }
+        })
       }
     },
 
@@ -162,11 +180,29 @@ export default defineComponent({
         this.data = r.data;
         let index_data = this.datas.results.findIndex((d: MlAttachementTicket) => d.id === r.data.id);
         if (index_data) {
-          this.datas.results[index_data] = r.data;
+          this.datas.results[index_data].valide = r.data.valide;
         }
         alert('ok'); 
       })
       .catch((r) => { console.log(r); alert(r); })
+    },
+
+    deleteMlAttachementTicket() {
+      this.q.dialog({
+        title: 'Confirm',
+        message: `Would you like to delete ${this.data.id}?`,
+        cancel: true,
+        persistent: true
+      }).onOk(() => {  
+        MlAttachementTicketService.delete(this.data.id)
+        .then((r) => {
+          this.datas.results = this.datas.results.filter((d: MlAttachementTicket) => d.id !== r.data.id);
+          this.data = {} as MlAttachementTicket;
+        })
+      })
+      .onCancel(() => {
+        console.log('Cancel')
+      })
     }
   }
 });

@@ -12,6 +12,10 @@ class MlAttachementTicketService {
         return MlAttachementTicketApi.list();
     }
 
+    static list_per_page(page: string | null): Promise<AxiosResponse<MlAttachementTicketPagginationResult>> {
+        return MlAttachementTicketApi.paggination_from_page_url(page)
+    }
+
     static get(id: number | undefined): Promise<AxiosResponse<MlAttachementTicket>> {
         if (id) {
             return MlAttachementTicketApi.get(id);
